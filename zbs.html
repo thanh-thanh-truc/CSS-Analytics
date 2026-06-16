@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mục Đích Gửi Tin ZBS</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0F1117;color:#E2E8F0;min-height:100vh}
+.topbar{background:#111E2E;border-bottom:1px solid #1E3A4F;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.logo{font-size:15px;font-weight:800;color:#fff}.logo span{color:#00C9A7}
+a.back{color:#64748B;font-size:13px;text-decoration:none;display:flex;align-items:center;gap:6px}
+a.back:hover{color:#E2E8F0}
+.tabs{display:flex;gap:0;border-bottom:1px solid #1E3A4F;padding:0 28px;background:#111E2E}
+.tab{padding:13px 22px;font-size:13px;font-weight:600;color:#64748B;cursor:pointer;border-bottom:2px solid transparent}
+.tab.active{color:#00C9A7;border-bottom-color:#00C9A7}
+.content{padding:24px 28px}
+.section-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:6px}
+.section-sub{font-size:12px;color:#64748B;margin-bottom:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.kpi{background:#1A2B3C;border:1px solid #1E3A4F;border-radius:10px;padding:16px}
+.kpi-label{font-size:11px;color:#64748B;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.kpi-val{font-size:26px;font-weight:800;color:#fff}
+.kpi-sub{font-size:12px;margin-top:4px}
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px}
+.chart-card{background:#1A2B3C;border:1px solid #1E3A4F;border-radius:12px;padding:18px}
+.chart-card h3{font-size:14px;font-weight:700;color:#E2E8F0;margin-bottom:14px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{padding:10px 12px;text-align:left;font-size:11px;color:#64748B;font-weight:600;border-bottom:1px solid #1E3A4F;text-transform:uppercase;letter-spacing:.5px}
+td{padding:10px 12px;border-bottom:1px solid #1E3A4F}
+tr:hover td{background:#1E3550}
+.num{text-align:right;font-family:'Courier New',monospace}
+.up{color:#00C9A7;font-weight:600}
+.dn{color:#FF4D7D;font-weight:600}
+.nhan-xet{font-size:11px;color:#94A3B8;font-style:italic}
+.bar-wrap{height:200px;position:relative}
+@media(max-width:640px){.chart-grid{grid-template-columns:1fr}.kpi-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">CSS <span>Analytics</span> — ZBS</div>
+  <a href="index.html" class="back">← Trang chủ</a>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('tuan',this)">📊 Theo Tuần</div>
+  <div class="tab" onclick="switchTab('thang',this)">📅 Theo Tháng</div>
+</div>
+<div class="content">
+
+<!-- ── TAB TUẦN ── -->
+<div id="tab-tuan">
+  <div class="section-title">Mục Đích Gửi Tin ZBS — Theo Tuần</div>
+  <div class="section-sub">So sánh 3 kỳ gần nhất: T2 - Tháng 5 | T1 - Tháng 6 | T2 - Tháng 6</div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">T2 - Tháng 5</div>
+      <div class="kpi-val">1.0M</div>
+      <div class="kpi-sub" style="color:#64748B">Tổng tin ZBS</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">T1 - Tháng 6</div>
+      <div class="kpi-val">1.5M</div>
+      <div class="kpi-sub" style="color:#64748B">Tổng tin ZBS</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">T2 - Tháng 6</div>
+      <div class="kpi-val">1.5M</div>
+      <div class="kpi-sub" style="color:#64748B">Tổng tin ZBS</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Biểu đồ so sánh theo mục đích</h3>
+      <div class="bar-wrap"><canvas id="zbs-tuan-bar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Phân bổ tuần mới nhất</h3>
+      <div class="bar-wrap"><canvas id="zbs-tuan-pie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:24px">
+    <h3>Chi tiết theo mục đích</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Mục đích</th>
+        <th class='num'>T2 - Tháng 5</th>
+        <th class='num'>T1 - Tháng 6</th>
+        <th class='num'>T2 - Tháng 6</th>
+        <th class="num">Tuần MN</th>
+        <th class="num">Tuần Trước</th>
+        <th class="num">vs Tuần Trước</th>
+        <th class="num">vs Cùng Kỳ</th>
+        <th>Số OA</th>
+        <th>Nhận xét</th>
+      </tr></thead><tbody>
+      <tr>
+        <td style="font-weight:600">Giao dịch</td>
+        <td class='num'>609K</td>
+        <td class='num'>927K</td>
+        <td class='num'>1.1M</td>
+        <td class="num" style="color:#E2E8F0;font-weight:700">1.1M</td>
+        <td class="num">927K</td>
+        <td class="num up">+15.7%</td>
+        <td class="num up">+76.3%</td>
+        <td class="num">353</td>
+        <td class="nhan-xet">Tăng nhẹ so với tuần trước | tăng mạnh so với cùng kỳ tháng trước</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Chăm sóc khách hàng</td>
+        <td class='num'>166K</td>
+        <td class='num'>341K</td>
+        <td class='num'>269K</td>
+        <td class="num" style="color:#E2E8F0;font-weight:700">269K</td>
+        <td class="num">341K</td>
+        <td class="num dn">-21.2%</td>
+        <td class="num up">+61.6%</td>
+        <td class="num">189</td>
+        <td class="nhan-xet">Giảm nhẹ so với tuần trước | tăng mạnh so với cùng kỳ tháng trước</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Hậu mãi</td>
+        <td class='num'>240K</td>
+        <td class='num'>195K</td>
+        <td class='num'>145K</td>
+        <td class="num" style="color:#E2E8F0;font-weight:700">145K</td>
+        <td class="num">195K</td>
+        <td class="num dn">-25.7%</td>
+        <td class="num dn">-39.7%</td>
+        <td class="num">64</td>
+        <td class="nhan-xet">Giảm nhẹ so với tuần trước | giảm mạnh so với cùng kỳ tháng trước</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Chưa map mục đích gửi tin</td>
+        <td class='num'>1</td>
+        <td class='num'>2</td>
+        <td class='num'>228K</td>
+        <td class="num" style="color:#E2E8F0;font-weight:700">228K</td>
+        <td class="num">2</td>
+        <td class="num up">+11424900.0%</td>
+        <td class="num up">+22849900.0%</td>
+        <td class="num">16</td>
+        <td class="nhan-xet">Tăng mạnh so với tuần trước | tăng mạnh so với cùng kỳ tháng trước</td>
+      </tr>
+      </tbody></table></div></div>
+</div>
+
+<!-- ── TAB THÁNG ── -->
+<div id="tab-thang" style="display:none">
+  <div class="section-title">Mục Đích Gửi Tin ZBS — Theo Tháng</div>
+  <div class="section-sub">Tháng 1 đến Tháng 5 năm 2026</div>
+
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Tháng 3</div>
+      <div class="kpi-val">4.5M</div>
+      <div class="kpi-sub" style="color:#64748B">Tổng tin ZBS</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Tháng 4</div>
+      <div class="kpi-val">5.3M</div>
+      <div class="kpi-sub" style="color:#64748B">Tổng tin ZBS</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Tháng 5</div>
+      <div class="kpi-val">5.5M</div>
+      <div class="kpi-sub" style="color:#00C9A7">+3.2% vs T4</div>
+    </div>
+  </div>
+
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Biểu đồ theo tháng</h3>
+      <div class="bar-wrap"><canvas id="zbs-thang-bar"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Phân bổ tháng mới nhất</h3>
+      <div class="bar-wrap"><canvas id="zbs-thang-pie"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:24px">
+    <h3>Chi tiết theo loại tin ZBS</h3>
+    <div class="table-wrap"><table>
+      <thead><tr>
+        <th>Loại tin ZBS</th>
+        <th class="num">Tháng 3</th>
+        <th class="num">Tháng 4</th>
+        <th class="num">Tháng 5</th>
+        <th class="num">Tổng</th>
+        <th class="num">Tháng MN</th>
+        <th class="num">Tháng Trước</th>
+        <th class="num">Chênh lệch</th>
+        <th>Số OA</th>
+      </tr></thead><tbody>
+      <tr>
+        <td style="font-weight:600">Giao dịch</td>
+        <td class="num">2.9M</td>
+        <td class="num">3.6M</td>
+        <td class="num">3.8M</td>
+        <td class="num">10.3M</td>
+        <td class="num" style="font-weight:700;color:#E2E8F0">3.8M</td>
+        <td class="num">3.6M</td>
+        <td class="num up">+214K (+5.9%)</td>
+        <td class="num">399</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Hậu mãi</td>
+        <td class="num">994K</td>
+        <td class="num">818K</td>
+        <td class="num">749K</td>
+        <td class="num">2.6M</td>
+        <td class="num" style="font-weight:700;color:#E2E8F0">749K</td>
+        <td class="num">818K</td>
+        <td class="num dn">69K (-8.4%)</td>
+        <td class="num">117</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Chăm sóc khách hàng</td>
+        <td class="num">694K</td>
+        <td class="num">843K</td>
+        <td class="num">868K</td>
+        <td class="num">2.4M</td>
+        <td class="num" style="font-weight:700;color:#E2E8F0">868K</td>
+        <td class="num">843K</td>
+        <td class="num up">+24K (+2.9%)</td>
+        <td class="num">239</td>
+      </tr>
+      <tr>
+        <td style="font-weight:600">Chưa map loại tin ZBS</td>
+        <td class="num">3</td>
+        <td class="num">9</td>
+        <td class="num">6</td>
+        <td class="num">18</td>
+        <td class="num" style="font-weight:700;color:#E2E8F0">6</td>
+        <td class="num">9</td>
+        <td class="num dn">3 (-33.3%)</td>
+        <td class="num">2</td>
+      </tr>
+    </tbody></table></div></div>
+</div>
+
+</div>
+<script>
+function switchTab(n,el){
+  ['tuan','thang'].forEach(t=>document.getElementById('tab-'+t).style.display=t===n?'block':'none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+const COLORS=['#00C9A7','#FFD166','#FF4D7D','#3B82F6','#8B5CF6'];
+
+const chartOpts = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{position:'top',labels:{color:'#64748B',font:{size:11}}}},
+  scales:{
+    x:{ticks:{color:'#64748B',font:{size:11}},grid:{color:'#1E3A4F'}},
+    y:{ticks:{color:'#64748B',font:{size:11},callback:v=>v>=1e6?v/1e6+'M':v>=1e3?v/1e3+'K':v},grid:{color:'#1E3A4F'}}
+  }
+};
+const pieOpts = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{position:'right',labels:{color:'#64748B',font:{size:11},boxWidth:12}}}
+};
+
+new Chart(document.getElementById('zbs-tuan-bar'),{type:'bar',
+  data:{labels:["Giao dịch", "Chăm sóc khách hàng", "Hậu mãi", "Chưa map mục đích gửi tin"],datasets:[{"label": "T2 - Tháng 5", "data": [608604.0, 166281.0, 240419.0, 1.0], "backgroundColor": "#1E3A4F", "borderRadius": 4}, {"label": "T1 - Tháng 6", "data": [927186.0, 340987.0, 194942.0, 2.0], "backgroundColor": "#FFD166", "borderRadius": 4}, {"label": "T2 - Tháng 6", "data": [1072968.0, 268632.0, 144907.0, 228500.0], "backgroundColor": "#FF4D7D", "borderRadius": 4}]},
+  options:{...chartOpts,plugins:{...chartOpts.plugins},scales:{...chartOpts.scales}}
+});
+new Chart(document.getElementById('zbs-tuan-pie'),{type:'doughnut',
+  data:{labels:["Giao dịch", "Chăm sóc khách hàng", "Hậu mãi", "Chưa map mục đích gửi tin"],
+    datasets:[{data:[1072968.0, 268632.0, 144907.0, 228500.0],backgroundColor:COLORS,borderWidth:0}]},
+  options:pieOpts
+});
+new Chart(document.getElementById('zbs-thang-bar'),{type:'bar',
+  data:{labels:["Giao dịch", "Hậu mãi", "Chăm sóc khách hàng", "Chưa map loại tin ZBS"],datasets:[{"label": "Tháng 3", "data": [2855966.0, 993896.0, 694182.0, 3.0], "backgroundColor": "#00E5C3", "borderRadius": 4}, {"label": "Tháng 4", "data": [3624938.0, 818150.0, 843458.0, 9.0], "backgroundColor": "#FFD166", "borderRadius": 4}, {"label": "Tháng 5", "data": [3839186.0, 749445.0, 867909.0, 6.0], "backgroundColor": "#FF4D7D", "borderRadius": 4}]},
+  options:{...chartOpts}
+});
+new Chart(document.getElementById('zbs-thang-pie'),{type:'doughnut',
+  data:{labels:["Giao dịch", "Hậu mãi", "Chăm sóc khách hàng", "Chưa map loại tin ZBS"],
+    datasets:[{data:[3839186.0, 749445.0, 867909.0, 6.0],backgroundColor:COLORS,borderWidth:0}]},
+  options:pieOpts
+});
+</script>
+</body></html>

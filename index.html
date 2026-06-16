@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSS Analytics</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0D1B2A;color:#E2E8F0;min-height:100vh}
+a{text-decoration:none;color:inherit}
+.topbar{background:#111E2E;border-bottom:1px solid #1E3A4F;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.logo{font-size:16px;font-weight:800;color:#fff}.logo span{color:#00C9A7}
+.badge{background:#00C9A722;color:#00C9A7;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid #00C9A744}
+.tabs{display:flex;border-bottom:1px solid #1E3A4F;padding:0 28px;background:#111E2E;overflow-x:auto}
+.tab{padding:13px 20px;font-size:13px;font-weight:600;color:#64748B;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:#00C9A7;border-bottom-color:#00C9A7}
+.tab:hover:not(.active){color:#E2E8F0}
+.content{padding:24px 28px;max-width:1200px}
+.search-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.search-input{flex:1;min-width:180px;background:#1A2B3C;border:1px solid #1E3A4F;border-radius:8px;padding:9px 14px;color:#E2E8F0;font-size:13px;outline:none}
+.search-input:focus,.search-input:hover{border-color:#00C9A7}
+select.sel{background:#1A2B3C;border:1px solid #1E3A4F;border-radius:8px;padding:9px 12px;color:#E2E8F0;font-size:13px;outline:none;cursor:pointer}
+select.sel:focus{border-color:#00C9A7}
+.sec-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#00C9A7;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:#1E3A4F}
+.sec-label.muted{color:#64748B}
+.feat-grid{display:grid;grid-template-columns:3fr 1fr;gap:16px;margin-bottom:28px}
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:28px}
+.card{background:#1A2B3C;border:1px solid #1E3A4F;border-radius:12px;padding:20px;display:block;transition:all .18s;position:relative;overflow:hidden}
+.card:hover{border-color:#00C9A7;transform:translateY(-2px)}
+.card-ribbon{position:absolute;top:0;left:0;right:0;height:3px;background:#00C9A7;border-radius:12px 12px 0 0}
+.card-ribbon.blue{background:#3B82F6}.card-ribbon.purple{background:#8B5CF6}
+.card-type{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.card-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.stat{font-size:11px;color:#94A3B8}.stat strong{color:#E2E8F0;font-size:13px;display:block}
+.chip{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px}
+.chip-new{background:#00C9A722;color:#00C9A7}
+.chip-up{background:#3B82F622;color:#3B82F6}
+.quick-links{display:flex;flex-direction:column;gap:8px}
+.ql{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;padding:9px 12px;border-radius:8px}
+.hcard{background:#1A2B3C;border:1px solid #1E3A4F;border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all .15s}
+.hcard:hover{border-color:#00C9A7;background:#1E3550}
+.hcard-icon{width:34px;height:34px;border-radius:8px;background:#00C9A714;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.hcard-body{flex:1;min-width:0}
+.hcard-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hcard-sub{font-size:11px;color:#64748B}
+.hcard-arr{color:#64748B;font-size:18px}
+.zbs-card{background:linear-gradient(135deg,#1A2B3C,#1E2E45);border:1px solid #3B82F633;border-radius:12px;padding:20px;display:block;transition:all .18s;margin-bottom:24px}
+.zbs-card:hover{border-color:#3B82F6;transform:translateY(-2px)}
+.empty{text-align:center;padding:48px 20px;color:#64748B;font-size:13px}
+@media(max-width:640px){.feat-grid{grid-template-columns:1fr}.content{padding:16px}.tabs,.topbar{padding-left:16px;padding-right:16px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">CSS <span>Analytics</span></div>
+  <div class="badge">● 2026</div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('tuan',this)">📊 Báo cáo Tuần</div>
+  <div class="tab" onclick="switchTab('thang',this)">📅 Báo cáo Tháng</div>
+  <div class="tab" onclick="switchTab('zbs',this)">🎯 ZBS Mục Đích</div>
+  <div class="tab" onclick="switchTab('template',this)">⬆ Upload Data</div>
+</div>
+<div class="content">
+
+<!-- TAB TUẦN -->
+<div id="tab-tuan">
+  <div class="search-row">
+    <input class="search-input" id="s-tuan" placeholder="🔍  Tìm tuần... vd: Tuần 1, Tháng 3" oninput="filter('tuan')">
+    <select class="sel" id="f-thang" onchange="filter('tuan')">
+      <option value="">Tất cả tháng</option>
+      <option value="1">Tháng 1</option><option value="2">Tháng 2</option>
+      <option value="3">Tháng 3</option><option value="4">Tháng 4</option>
+      <option value="5">Tháng 5</option>
+    </select>
+  </div>
+  <div id="tuan-featured"></div>
+  <div id="tuan-history"></div>
+  <div id="tuan-empty" class="empty" style="display:none">Không tìm thấy kỳ phù hợp.</div>
+</div>
+
+<!-- TAB THÁNG -->
+<div id="tab-thang" style="display:none">
+  <div class="search-row">
+    <input class="search-input" id="s-thang" placeholder="🔍  Tìm tháng... vd: Tháng 3, Q2" oninput="filter('thang')">
+    <select class="sel" id="f-quy" onchange="filter('thang')">
+      <option value="">Tất cả quý</option>
+      <option value="1">Q1 (T1-T3)</option>
+      <option value="2">Q2 (T4-T6)</option>
+    </select>
+  </div>
+  <div id="thang-featured"></div>
+  <div id="thang-history"></div>
+</div>
+
+<!-- TAB ZBS -->
+<div id="tab-zbs" style="display:none">
+  <a href="zbs.html" class="zbs-card">
+    <div class="card-ribbon purple"></div>
+    <div class="card-type" style="color:#8B5CF6">MỤC ĐÍCH GỬI TIN ZBS</div>
+    <div class="card-title" style="font-size:20px">🎯 Phân Tích Mục Đích ZBS</div>
+    <div class="stats">
+      <div class="stat"><strong>Giao dịch</strong>1.07M • Tuần MN</div>
+      <div class="stat"><strong>CSKH</strong>268K • Tuần MN</div>
+      <div class="stat"><strong>Hậu mãi</strong>144K • Tuần MN</div>
+    </div>
+    <div style="font-size:12px;color:#64748B">Xem biểu đồ so sánh theo tuần và tháng, phân bổ OA theo mục đích →</div>
+  </a>
+</div>
+
+<!-- TAB TEMPLATE -->
+<div id="tab-template" style="display:none">
+  <div class="hist-grid" style="grid-template-columns:1fr 1fr;margin-top:8px">
+    <a href="bao-cao-tuan.html" class="card">
+      <div class="card-ribbon blue"></div>
+      <div class="card-type" style="color:#3B82F6">UPLOAD → PHÂN TÍCH TUẦN</div>
+      <div class="card-title">Template Báo Cáo Tuần <span class="chip chip-up">Upload Data</span></div>
+      <div style="font-size:12px;color:#64748B">Upload file Excel tuần bất kỳ → tự phân tích 3 kỳ so sánh.</div>
+    </a>
+    <a href="bao-cao-thang.html" class="card">
+      <div class="card-ribbon blue"></div>
+      <div class="card-type" style="color:#3B82F6">UPLOAD → PHÂN TÍCH THÁNG</div>
+      <div class="card-title">Template Báo Cáo Tháng <span class="chip chip-up">Upload Data</span></div>
+      <div style="font-size:12px;color:#64748B">Upload file Excel tháng bất kỳ → tự phân tích 3 tháng gần nhất.</div>
+    </a>
+  </div>
+</div>
+
+</div>
+<script>
+const TUAN = [
+  {l:"Tuần 2 Tháng 6",th:6,tu:2,f:"tuan-2-thang-6.html",tc:"3.1M",kh:879,al:369,tang:137},
+  {l:"Tuần 1 Tháng 6",th:6,tu:1,f:"tuan-1-thang-6.html",tc:"2.4M",kh:884,al:337,tang:173},
+  {l:"Tuần 4 Tháng 5",th:5,tu:4,f:"tuan-4-thang-5.html",tc:"1.8M",kh:860,al:354,tang:141},
+  {l:"Tuần 3 Tháng 5",th:5,tu:3,f:"tuan-3-thang-5.html",tc:"2.1M",kh:874,al:362,tang:168},
+  {l:"Tuần 2 Tháng 5",th:5,tu:2,f:"tuan-2-thang-5.html",tc:"2.0M",kh:895,al:363,tang:151},
+  {l:"Tuần 1 Tháng 5",th:5,tu:1,f:"tuan-1-thang-5.html",tc:"2.5M",kh:879,al:288,tang:273},
+  {l:"Tuần 4 Tháng 4",th:4,tu:4,f:"tuan-4-thang-4.html",tc:"1.7M",kh:806,al:466,tang:94},
+  {l:"Tuần 3 Tháng 4",th:4,tu:3,f:"tuan-3-thang-4.html",tc:"2.4M",kh:885,al:333,tang:161},
+  {l:"Tuần 2 Tháng 4",th:4,tu:2,f:"tuan-2-thang-4.html",tc:"1.9M",kh:890,al:307,tang:151},
+  {l:"Tuần 1 Tháng 4",th:4,tu:1,f:"tuan-1-thang-4.html",tc:"2.0M",kh:870,al:313,tang:188},
+  {l:"Tuần 5 Tháng 3",th:3,tu:5,f:"tuan-5-thang-3.html",tc:"1.9M",kh:885,al:334,tang:150},
+  {l:"Tuần 4 Tháng 3",th:3,tu:4,f:"tuan-4-thang-3.html",tc:"2.0M",kh:883,al:339,tang:156},
+  {l:"Tuần 3 Tháng 3",th:3,tu:3,f:"tuan-3-thang-3.html",tc:"2.1M",kh:892,al:342,tang:156},
+  {l:"Tuần 2 Tháng 3",th:3,tu:2,f:"tuan-2-thang-3.html",tc:"1.9M",kh:889,al:335,tang:182},
+  {l:"Tuần 1 Tháng 3",th:3,tu:1,f:"tuan-1-thang-3.html",tc:"2.2M",kh:877,al:326,tang:251},
+  {l:"Tuần 4 Tháng 2",th:2,tu:4,f:"tuan-4-thang-2.html",tc:"1.7M",kh:826,al:194,tang:334},
+  {l:"Tuần 3 Tháng 2",th:2,tu:3,f:"tuan-3-thang-2.html",tc:"783K",kh:567,al:698,tang:46},
+  {l:"Tuần 2 Tháng 2",th:2,tu:2,f:"tuan-2-thang-2.html",tc:"1.9M",kh:862,al:460,tang:155},
+  {l:"Tuần 1 Tháng 2",th:2,tu:1,f:"tuan-1-thang-2.html",tc:"2.3M",kh:918,al:376,tang:202},
+  {l:"Tuần 4 Tháng 1",th:1,tu:4,f:"tuan-4-thang-1.html",tc:"2.1M",kh:917,al:370,tang:156},
+  {l:"Tuần 3 Tháng 1",th:1,tu:3,f:"tuan-3-thang-1.html",tc:"2.1M",kh:932,al:379,tang:156},
+  {l:"Tuần 2 Tháng 1",th:1,tu:2,f:"tuan-2-thang-1.html",tc:"2.1M",kh:929,al:348,tang:194},
+  {l:"Tuần 1 Tháng 1",th:1,tu:1,f:"tuan-1-thang-1.html",tc:"2.1M",kh:875,al:131,tang:0}
+];
+const THANG = [
+  {l:"Tháng 5",th:5,f:"thang-5.html",tc:"9.3M",kh:1154,al:523,tang:179},
+  {l:"Tháng 4",th:4,f:"thang-4.html",tc:"9.5M",kh:1126,al:488,tang:205},
+  {l:"Tháng 3",th:3,f:"thang-3.html",tc:"9.9M",kh:1129,al:455,tang:386},
+  {l:"Tháng 2",th:2,f:"thang-2.html",tc:"7.6M",kh:1085,al:706,tang:150},
+  {l:"Tháng 1",th:1,f:"thang-1.html",tc:"9.3M",kh:1198,al:203,tang:0}
+];
+
+function makeFeatCard(d,type){
+  const isT = type==='tuan';
+  return `<div class="feat-grid">
+    <a href="${d.f}" class="card">
+      <div class="card-ribbon"></div>
+      <div class="card-type" style="color:#00C9A7">${d.l.toUpperCase()} • MỚI NHẤT</div>
+      <div class="card-title">${d.l} <span class="chip chip-new">Mới nhất</span></div>
+      <div class="stats">
+        <div class="stat"><strong>${d.tc}</strong>TC Thành Công</div>
+        <div class="stat"><strong>${d.kh}</strong>Khách Hàng</div>
+        <div class="stat"><strong>${d.al}</strong>Cảnh Báo</div>
+        <div class="stat"><strong>${d.tang}</strong>KH Tăng Mạnh</div>
+      </div>
+    </a>
+    <div class="card" style="padding:16px">
+      <div style="font-size:11px;color:#64748B;margin-bottom:12px;font-weight:600">TRUY CẬP NHANH</div>
+      <div class="quick-links">
+        <a href="${d.f}#alerts" class="ql" style="color:#FF4D7D;background:#FF4D7D11">⚠️ ${d.al} cảnh báo</a>
+        <a href="${d.f}#tang"   class="ql" style="color:#00C9A7;background:#00C9A711">📈 ${d.tang} KH tăng mạnh</a>
+        <a href="${d.f}#overview" class="ql" style="color:#3B82F6;background:#3B82F611">📊 Tổng quan</a>
+      </div>
+    </div>
+  </div>`;
+}
+function makeHistCard(d){
+  return `<a href="${d.f}" class="hcard">
+    <div class="hcard-icon">📋</div>
+    <div class="hcard-body">
+      <div class="hcard-title">${d.l}</div>
+      <div class="hcard-sub">${d.tc} TC • ${d.kh} KH • ${d.al} cảnh báo</div>
+    </div>
+    <div class="hcard-arr">›</div>
+  </a>`;
+}
+
+function renderTuan(list){
+  const latest=list[0], hist=list.slice(1);
+  document.getElementById('tuan-featured').innerHTML = latest
+    ? '<div class="sec-label">Tuần mới nhất</div>' + makeFeatCard(latest,'tuan') : '';
+  document.getElementById('tuan-history').innerHTML = hist.length
+    ? '<div class="sec-label muted">Các kỳ trước</div><div class="hist-grid">'+hist.map(makeHistCard).join('')+'</div>' : '';
+  document.getElementById('tuan-empty').style.display = list.length?'none':'block';
+}
+function renderThang(list){
+  const latest=list[0], hist=list.slice(1);
+  document.getElementById('thang-featured').innerHTML = latest
+    ? '<div class="sec-label">Tháng mới nhất</div>' + makeFeatCard(latest,'thang') : '';
+  document.getElementById('thang-history').innerHTML = hist.length
+    ? '<div class="sec-label muted">Các tháng trước</div><div class="hist-grid">'+hist.map(makeHistCard).join('')+'</div>' : '';
+}
+
+function filter(type){
+  if(type==='tuan'){
+    const q=document.getElementById('s-tuan').value.toLowerCase();
+    const th=document.getElementById('f-thang').value;
+    let list=TUAN.filter(d=>{
+      const mQ=!q||d.l.toLowerCase().includes(q)||String(d.tu).includes(q)||String(d.th).includes(q);
+      const mT=!th||d.th===parseInt(th);
+      return mQ&&mT;
+    });
+    renderTuan(list);
+  } else {
+    const q=document.getElementById('s-thang').value.toLowerCase();
+    const quy=document.getElementById('f-quy').value;
+    const qmap={'1':[1,2,3],'2':[4,5,6]};
+    let list=THANG.filter(d=>{
+      const mQ=!q||d.l.toLowerCase().includes(q)||String(d.th).includes(q);
+      const mQuy=!quy||(qmap[quy]||[]).includes(d.th);
+      return mQ&&mQuy;
+    });
+    renderThang(list);
+  }
+}
+function switchTab(n,el){
+  ['tuan','thang','zbs','template'].forEach(t=>document.getElementById('tab-'+t).style.display=t===n?'block':'none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+renderTuan(TUAN);
+renderThang(THANG);
+</script>
+</body></html>
