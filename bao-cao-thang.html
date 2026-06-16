@@ -2583,57 +2583,170 @@ function zbsFmtPct(pct, prev, cur){
 function zbsFmtNum(n){ return n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':String(Math.round(n)); }
 function fmtFull(n){ n=Math.round(n||0); return n.toLocaleString('vi-VN'); }
 
-function renderZBSTab(name){
-  const root = document.getElementById('zbs-'+name+'-root');
-  if(!root) return;
-  function emptyState(msg){ root.innerHTML='<div class="zbs-empty"><div class="zbs-empty-icon">📭</div><p>'+msg+'</p></div>'; }
+// ══ ZBS KH Helper Functions ══
+var _zbs_kh_tuan_all = [];
 
-  // Detect which ZBS data to use: tuan or thang based on current dashboard type
-  const isThang = !!(window.__ZBS && window.__ZBS.thang && !window.__ZBS.tuan);
-  const zbsSrc  = window.__ZBS ? (window.__ZBS.tuan || window.__ZBS.thang) : null;
-  const items   = zbsSrc ? (zbsSrc.muc_dich || zbsSrc.loai_tin || []) : [];
-  const meta    = zbsSrc ? zbsSrc.meta : {};
+function filterZBSMucDich(){
+  var q=(document.getElementById('zbs-md-search')||{}).value||'';
+  var md=(document.getElementById('zbs-md-filter')||{}).value||'';
+  var list=(window._zbs_kh_tuan||[]).filter(function(k){
+    var matchQ=!q||(k.oa_name&&k.oa_name.toLowerCase().includes(q.toLowerCase()))||(k.email&&k.email.toLowerCase().includes(q.toLowerCase()));
+    var matchMD=!md||k.muc_dich===md;
+    return matchQ&&matchMD;
+  });
+  var tbody=document.getElementById('zbs-md-tbody');
+  if(!tbody) return;
+  var CUR_BG='rgba(255,209,100,.12)', CUR_TXT='#FFD166';
+  var meta=window.__ZBS&&window.__ZBS.tuan?window.__ZBS.tuan.meta:{};
+  var lc=meta.label_cur||'Hiện tại', lp=meta.label_prev||'Tuần trước', ls=meta.label_same||'Cùng kỳ';
+  tbody.innerHTML=list.map(function(k,i){
+    var pc=k.prev>0?k.pct*100:(k.cur>0?Infinity:0);
+    var pcs=k.same>0?(k.cur-k.same)/k.same*100:(k.cur>0?Infinity:0);
+    var pl=normalizePL(k.phanloai)||'—';
+    return '<tr class="clickable-row" onclick="openZBSKHDetail(\''+k.email.replace(/'/g,"\\'")+'\')">'
+      +'<td style="font-weight:600">'+(k.oa_name||'—')+'</td>'
+      +'<td style="font-size:10px;color:var(--muted)">'+(k.email||'')+'</td>'
+      +'<td><span class="chip chip-blue" style="font-size:9px">'+pl+'</span></td>'
+      +'<td style="font-size:11px;color:var(--muted)">'+(k.muc_dich||'—')+'</td>'
+      +'<td class="num" style="background:'+CUR_BG+';color:#fff;font-weight:700">'+zbsFmtNum(k.cur)+'</td>'
+      +'<td class="num" style="background:'+CUR_BG+';color:'+CUR_TXT+'">—</td>'
+      +'<td class="num">'+zbsFmtPct(pc,k.prev,k.cur)+'</td>'
+      +'<td class="num">'+zbsFmtNum(k.prev)+'</td>'
+      +'<td class="num">'+zbsFmtPct(pcs,k.same||0,k.cur)+'</td>'
+      +'<td class="num">'+zbsFmtNum(k.same||0)+'</td>'
+      +'<td style="font-size:10px;color:var(--muted)">'+(k.nhan_xet||'—')+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+function renderZBSTopRows(list){
+  var tbody=document.getElementById('zbs-top-tbody');
+  if(!tbody) return;
+  var CUR_BG='rgba(255,209,100,.12)', CUR_TXT='#FFD166';
+  var meta=window.__ZBS&&window.__ZBS.tuan?window.__ZBS.tuan.meta:{};
+  var lp=meta.label_prev||'Tuần trước';
+  tbody.innerHTML=list.map(function(k,i){
+    var pc=k.prev>0?k.pct*100:(k.cur>0?Infinity:0);
+    var pcs=k.same>0?(k.cur-k.same)/k.same*100:(k.cur>0?Infinity:0);
+    var pl=normalizePL(k.phanloai)||'—';
+    return '<tr class="clickable-row" onclick="openZBSKHDetail(\''+k.email.replace(/'/g,"\\'")+'\')">'
+      +'<td style="color:var(--muted);font-size:11px">'+(i+1)+'</td>'
+      +'<td style="font-weight:600">'+(k.oa_name||k.email||'—')+'</td>'
+      +'<td style="font-size:10px;color:var(--muted)">'+(k.email||'')+'</td>'
+      +'<td><span class="chip chip-blue" style="font-size:9px">'+pl+'</span></td>'
+      +'<td style="font-size:11px;color:var(--muted)">'+(k.muc_dich||'—')+'</td>'
+      +'<td class="num" style="background:'+CUR_BG+';color:#fff;font-weight:700">'+zbsFmtNum(k.cur)+'</td>'
+      +'<td class="num" style="background:'+CUR_BG+';color:'+CUR_TXT+'">—</td>'
+      +'<td class="num">'+zbsFmtPct(pc,k.prev,k.cur)+'</td>'
+      +'<td class="num">'+zbsFmtPct(pcs,k.same||0,k.cur)+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
+function filterZBSTop(){
+  var q=(document.getElementById('zbs-top-search')||{}).value||'';
+  var list=(window._zbs_top_all||[]).filter(function(k){
+    return !q||(k.oa_name&&k.oa_name.toLowerCase().includes(q.toLowerCase()))||(k.email&&k.email.toLowerCase().includes(q.toLowerCase()));
+  }).slice(0,30);
+  renderZBSTopRows(list);
+}
+
+function openZBSKHDetail(email){
+  var detBtn=document.querySelector('.zbs-tab[onclick*="detail"]');
+  switchZBSTab('detail',detBtn);
+  setTimeout(function(){searchZBSKH(email);var inp=document.getElementById('zbs-det-q');if(inp)inp.value=email;},50);
+}
+
+function searchZBSKH(q){
+  var res=document.getElementById('zbs-det-result');
+  if(!res) return;
+  var khT=window.__ZBS_KH_TUAN||[];
+  var list=q?khT.filter(function(k){
+    return (k.oa_name&&k.oa_name.toLowerCase().includes(q.toLowerCase()))||(k.email&&k.email.toLowerCase().includes(q.toLowerCase()));
+  }):khT.slice(0,50);
+
+  var meta=window.__ZBS&&window.__ZBS.tuan?window.__ZBS.tuan.meta:{};
+  var lc=meta.label_cur||'Hiện tại', lp=meta.label_prev||'Tuần trước', ls=meta.label_same||'Cùng kỳ';
+  var CUR_BG='rgba(255,209,100,.12)', CUR_TXT='#FFD166';
+
+  if(!list.length){
+    res.innerHTML='<div class="zbs-empty" style="padding:30px"><div class="zbs-empty-icon">🔍</div><p>Không tìm thấy KH ZBS.</p></div>'; return;
+  }
+
+  res.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">'+list.length+' kết quả'+(q?' cho: <strong style="color:var(--text)">'+q+'</strong>':'')+'</div>'
+    +'<div class="table-wrap"><table>'
+    +'<thead><tr><th>Tên OA</th><th style="font-size:10px;color:var(--muted)">Email</th><th>Phân loại</th><th>Mục đích</th>'
+    +'<th class="num" style="background:'+CUR_BG+';color:'+CUR_TXT+'">'+lc+'</th>'
+    +'<th class="num">So sánh tuần trước</th><th class="num">'+lp+'</th>'
+    +'<th class="num">So sánh cùng kỳ</th><th class="num">'+ls+'</th>'
+    +'<th>Nhận xét</th></tr></thead><tbody>'
+    +list.map(function(k){
+      var pc=k.prev>0?k.pct*100:(k.cur>0?Infinity:0);
+      var pcs=k.same>0?(k.cur-k.same)/k.same*100:(k.cur>0?Infinity:0);
+      return '<tr><td style="font-weight:600">'+(k.oa_name||'—')+'</td>'
+        +'<td style="font-size:10px;color:var(--muted)">'+(k.email||'')+'</td>'
+        +'<td><span class="chip chip-blue" style="font-size:9px">'+normalizePL(k.phanloai||'—')+'</span></td>'
+        +'<td style="font-size:11px">'+(k.muc_dich||'—')+'</td>'
+        +'<td class="num" style="background:'+CUR_BG+';color:#fff;font-weight:700">'+zbsFmtNum(k.cur)+'</td>'
+        +'<td class="num">'+zbsFmtPct(pc,k.prev,k.cur)+'</td>'
+        +'<td class="num">'+zbsFmtNum(k.prev)+'</td>'
+        +'<td class="num">'+zbsFmtPct(pcs,k.same||0,k.cur)+'</td>'
+        +'<td class="num">'+zbsFmtNum(k.same||0)+'</td>'
+        +'<td style="font-size:10px;color:var(--muted)">'+(k.nhan_xet||'—')+'</td>'
+        +'</tr>';
+    }).join('')+'</tbody></table></div>';
+}
+
+function renderZBSTab(name){
+  const root=document.getElementById('zbs-'+name+'-root');
+  if(!root) return;
+  function emptyState(msg){root.innerHTML='<div class="zbs-empty"><div class="zbs-empty-icon">📭</div><p>'+msg+'</p></div>';}
+
+  // ZBS data sources
+  const zbsT  = window.__ZBS&&window.__ZBS.tuan  ? window.__ZBS.tuan  : null;
+  const zbsM  = window.__ZBS&&window.__ZBS.thang ? window.__ZBS.thang : null;
+  const khT   = window.__ZBS_KH_TUAN  || [];
+  const khM   = window.__ZBS_KH_THANG || [];
+  const items = zbsT ? (zbsT.muc_dich||[]) : (zbsM ? (zbsM.loai_tin||[]) : []);
+  const meta  = zbsT ? zbsT.meta : (zbsM ? zbsM.meta : {});
+  const lc = meta.label_cur||'Hiện tại', lp = meta.label_prev||'Tuần trước', ls = meta.label_same||'Cùng kỳ';
+
+  // Colors for cur column
+  const CUR_BG  = 'rgba(255,209,100,.12)';
+  const CUR_TXT = '#FFD166';
+  const CUR_BDR = '2px solid rgba(255,209,100,.3)';
 
   // ── A. TỔNG QUAN ──
   if(name==='overview'){
-    if(!items.length){
-      emptyState('Chưa có dữ liệu ZBS Tổng Quan cho kỳ này.<br>File Excel cần có sheet <strong>Mục đích gửi tin ZBS</strong>.');
-      return;
-    }
-    const tong_cur  = meta.tong_cur  || items.reduce((s,d)=>s+d.cur,0);
-    const tong_prev = meta.tong_prev || items.reduce((s,d)=>s+d.prev,0);
-    const tong_diff = tong_cur - tong_prev;
-    const tong_pct  = tong_prev>0 ? (tong_diff/tong_prev*100) : null;
-    const lc = meta.label_cur||'Hiện tại', lp=meta.label_prev||'Kỳ trước', ls=meta.label_same||'Cùng kỳ';
-    const tong_same = items.reduce((s,d)=>s+(d.same||0),0);
-    const oa_total  = items.reduce((s,d)=>s+(d.oa||0),0);
+    if(!items.length){ emptyState('Chưa có dữ liệu ZBS Tổng Quan.<br>File cần có sheet <strong>Mục đích gửi tin ZBS</strong>.'); return; }
+    const tong_cur=meta.tong_cur||items.reduce((s,d)=>s+d.cur,0);
+    const tong_prev=meta.tong_prev||items.reduce((s,d)=>s+d.prev,0);
+    const tong_same=items.reduce((s,d)=>s+(d.same||0),0);
+    const oa_total=items.reduce((s,d)=>s+(d.oa||0),0);
+    const tong_pct=tong_prev>0?(tong_cur-tong_prev)/tong_prev*100:null;
 
-    root.innerHTML = `
+    root.innerHTML=`
 <div style="margin-bottom:20px">
   <div style="font-size:12px;color:var(--muted);margin-bottom:14px">
-    So sánh: <strong style="color:var(--c-latest)">${lc}</strong> vs <strong style="color:var(--c-prev)">${lp}</strong> vs <strong style="color:var(--c-month)">${ls}</strong>
+    So sánh: <strong style="color:${CUR_TXT}">${lc}</strong> | <strong style="color:var(--c-prev)">${lp}</strong> | <strong style="color:var(--c-month)">${ls}</strong>
   </div>
   <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
-    <div class="kpi-card latest">
-      <div class="kpi-label">Tổng ZBS ${lc}</div>
-      <div class="kpi-value">${zbsFmtNum(tong_cur)}</div>
-    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_cur)}</div>
-      <div class="kpi-row"><div class="kpi-cmp ${tong_pct>=0?'up':'down'}">${zbsFmtPct(tong_pct,tong_prev,tong_cur)} vs ${lp}</div></div>
+    <div class="kpi-card latest" style="background:${CUR_BG};border:${CUR_BDR}">
+      <div class="kpi-label" style="color:${CUR_TXT}">${lc}</div>
+      <div class="kpi-value" style="color:#fff">${zbsFmtNum(tong_cur)}</div>
+      <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_cur)}</div>
+      <div class="kpi-label" style="margin-top:6px;color:${CUR_TXT}">Số OA</div>
+      <div style="font-size:18px;font-weight:700;color:#fff">${Math.round(oa_total)}</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Kỳ trước (${lp})</div>
+      <div class="kpi-label">${lp}</div>
       <div class="kpi-value">${zbsFmtNum(tong_prev)}</div>
-    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_prev)}</div>
+      <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_prev)}</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Cùng kỳ (${ls})</div>
+      <div class="kpi-label">${ls}</div>
       <div class="kpi-value">${zbsFmtNum(tong_same)}</div>
-    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_same)}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Tổng OA phát sinh</div>
-      <div class="kpi-value">${Math.round(oa_total)}</div>
-      <div class="kpi-row"><div class="kpi-cmp neutral">OA đang dùng</div></div>
+      <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_same)}</div>
     </div>
   </div>
 </div>
@@ -2644,7 +2757,7 @@ function renderZBSTab(name){
     <div class="chart-wrap" style="height:260px"><canvas id="zbs-ov-bar"></canvas></div>
   </div>
   <div class="chart-card">
-    <h3>Phân bổ kỳ hiện tại</h3>
+    <h3>Phân bổ ${lc}</h3>
     <div class="chart-wrap" style="height:260px"><canvas id="zbs-ov-donut"></canvas></div>
   </div>
 </div>
@@ -2654,285 +2767,217 @@ function renderZBSTab(name){
   <div class="table-wrap"><table>
     <thead><tr>
       <th>Mục đích</th>
-      <th class="num">${lc}</th>
+      <th class="num" style="background:${CUR_BG};color:${CUR_TXT}">${lc}</th>
+      <th class="num" style="background:${CUR_BG};color:${CUR_TXT}">Số OA</th>
+      <th class="num">So sánh tuần trước</th>
       <th class="num">${lp}</th>
-      <th class="num">vs ${lp}</th>
+      <th class="num">So sánh cùng kỳ</th>
       <th class="num">${ls}</th>
-      <th class="num">vs ${ls}</th>
-      <th class="num">Số OA</th>
       <th>Nhận xét</th>
     </tr></thead>
     <tbody>
       ${items.map(d=>{
-        const pc_prev = d.prev>0 ? d.pct*100 : (d.cur>0?Infinity:0);
-        const pc_same = d.same>0 ? (d.cur-d.same)/d.same*100 : (d.cur>0?Infinity:0);
-        return '<tr><td style="font-weight:600">'+d.name+'</td>'+
-          '<td class="num" style="color:var(--c-latest);font-weight:700">'+zbsFmtNum(d.cur)+'</td>'+
-          '<td class="num">'+zbsFmtNum(d.prev)+'</td>'+
+        const pc_prev=d.prev>0?d.pct*100:(d.cur>0?Infinity:0);
+        const pc_same=d.same>0?(d.cur-d.same)/d.same*100:(d.cur>0?Infinity:0);
+        return '<tr>'+
+          '<td style="font-weight:600">'+d.name+'</td>'+
+          '<td class="num" style="background:'+CUR_BG+';color:#fff;font-weight:700">'+zbsFmtNum(d.cur)+'</td>'+
+          '<td class="num" style="background:'+CUR_BG+';color:'+CUR_TXT+'">'+Math.round(d.oa||0)+'</td>'+
           '<td class="num">'+zbsFmtPct(pc_prev,d.prev,d.cur)+'</td>'+
-          '<td class="num">'+zbsFmtNum(d.same||0)+'</td>'+
+          '<td class="num">'+zbsFmtNum(d.prev)+'</td>'+
           '<td class="num">'+zbsFmtPct(pc_same,d.same||0,d.cur)+'</td>'+
-          '<td class="num">'+Math.round(d.oa||0)+'</td>'+
-          '<td style="font-size:11px;color:var(--muted)">'+( d.nhan_xet||'—')+'</td></tr>';
+          '<td class="num">'+zbsFmtNum(d.same||0)+'</td>'+
+          '<td style="font-size:11px;color:var(--muted)">'+(d.nhan_xet||'—')+'</td></tr>';
       }).join('')}
     </tbody>
   </table></div>
 </div>`;
 
-    // Draw charts after DOM ready
     setTimeout(()=>{
-      const labels  = items.map(d=>d.name.replace('Chưa map mục đích gửi tin','Chưa map'));
-      const PALETTE = ['#E6A15A','#7AA2E3','#7BC99A','#D98BA1'];
-      makeChart('zbs-ov-bar','bar',{
-        labels,
-        datasets:[
-          {label:ls,   data:items.map(d=>d.same||0),  backgroundColor:'#7BC99A88',borderRadius:4},
-          {label:lp,   data:items.map(d=>d.prev),       backgroundColor:'#7AA2E388',borderRadius:4},
-          {label:lc,   data:items.map(d=>d.cur),        backgroundColor:'#E6A15A',  borderRadius:4},
-        ]
-      },{plugins:{legend:{position:'top',labels:{color:'#7A8499',font:{size:11}}}},
+      const labels=items.map(d=>d.name.replace('Chưa map mục đích gửi tin','Chưa map'));
+      const PALETTE=['#E6A15A','#7AA2E3','#7BC99A','#D98BA1'];
+      makeChart('zbs-ov-bar','bar',{labels,datasets:[
+        {label:ls,  data:items.map(d=>d.same||0), backgroundColor:'#7BC99A88',borderRadius:4},
+        {label:lp,  data:items.map(d=>d.prev),    backgroundColor:'#7AA2E388',borderRadius:4},
+        {label:lc,  data:items.map(d=>d.cur),      backgroundColor:'#FFD166',  borderRadius:4},
+      ]},{plugins:{legend:{position:'top',labels:{color:'#7A8499',font:{size:11}}}},
          scales:{y:{ticks:{callback:v=>zbsFmtNum(v),color:'#7A8499'},grid:{color:'#343747'}},
                  x:{ticks:{color:'#7A8499'},grid:{color:'#343747'}}}});
-      makeChart('zbs-ov-donut','doughnut',{
-        labels,
-        datasets:[{data:items.map(d=>d.cur),backgroundColor:PALETTE,borderWidth:0}]
-      },{plugins:{legend:{position:'right',labels:{color:'#7A8499',font:{size:11}}}}});
+      makeChart('zbs-ov-donut','doughnut',{labels,datasets:[{data:items.map(d=>d.cur),backgroundColor:PALETTE,borderWidth:0}]},
+        {plugins:{legend:{position:'right',labels:{color:'#7A8499',font:{size:11}}}}});
     },50);
   }
 
-  // ── B. THEO MỤC ĐÍCH ──
+  // ── B. THEO MỤC ĐÍCH (per-KH from ZBS TUAN sheet) ──
   else if(name==='mucdich'){
-    if(!items.length){
-      emptyState('Chưa có dữ liệu mục đích ZBS.<br>File Excel cần có sheet <strong>Mục đích gửi tin ZBS</strong>.');
-      return;
-    }
-    const lc=meta.label_cur||'Hiện tại', lp=meta.label_prev||'Kỳ trước', ls=meta.label_same||'Cùng kỳ';
-
-    // Period breakdown columns (by_period for tuan, by_month for thang)
-    const periodKeys = items[0] ? Object.keys(items[0].by_period||items[0].by_month||{}) : [];
-
-    root.innerHTML = `
+    if(!khT.length){ emptyState('Chưa có dữ liệu chi tiết KH theo mục đích ZBS.'); return; }
+    const pl = data['ZBS_PERIOD_LABELS'] || (zbsT?zbsT.period_labels:[]);
+    root.innerHTML=`
 <div class="chart-card" style="margin-bottom:16px">
   <h3>Chi tiết theo mục đích — ${lc}</h3>
-  <div class="table-wrap"><table>
+  <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap">
+    <input id="zbs-md-search" placeholder="🔍 Tìm OA hoặc email..." oninput="filterZBSMucDich()"
+      style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text);font-size:12px;outline:none;width:240px">
+    <select id="zbs-md-filter" onchange="filterZBSMucDich()" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text);font-size:12px;outline:none">
+      <option value="">Tất cả mục đích</option>
+      ${[...new Set(khT.map(k=>k.muc_dich).filter(Boolean))].map(m=>'<option value="'+m+'">'+m+'</option>').join('')}
+    </select>
+  </div>
+  <div class="table-wrap" style="max-height:480px;overflow-y:auto">
+  <table id="zbs-md-table">
     <thead><tr>
+      <th>Tên OA</th>
+      <th style="font-size:10px;color:var(--muted)">Email</th>
+      <th>Phân loại</th>
       <th>Mục đích</th>
-      ${periodKeys.map(k=>'<th class="num">'+k+'</th>').join('')}
-      <th class="num">Tổng</th>
-      <th class="num">Kỳ hiện tại</th>
-      <th class="num">Kỳ trước</th>
-      <th class="num">vs Kỳ trước</th>
-      <th class="num">Cùng kỳ</th>
-      <th class="num">vs Cùng kỳ</th>
-      <th class="num">Số OA</th>
-      <th style="min-width:200px">Nhận xét xu hướng</th>
+      <th class="num" style="background:${CUR_BG};color:${CUR_TXT}">${lc}</th>
+      <th class="num" style="background:${CUR_BG};color:${CUR_TXT}">Số OA</th>
+      <th class="num">So sánh tuần trước</th>
+      <th class="num">${lp}</th>
+      <th class="num">So sánh cùng kỳ</th>
+      <th class="num">${ls}</th>
+      <th>Nhận xét</th>
     </tr></thead>
-    <tbody>
-      ${items.map(d=>{
-        const periods = d.by_period || d.by_month || {};
-        const pc_prev = d.prev>0 ? d.pct*100 : (d.cur>0?Infinity:0);
-        const pc_same = d.same>0 ? ((d.cur-(d.same||0))/(d.same||1)*100) : (d.cur>0?Infinity:0);
-        return '<tr>'+
-          '<td style="font-weight:600;white-space:nowrap">'+d.name+'</td>'+
-          periodKeys.map(k=>'<td class="num">'+zbsFmtNum(periods[k]||0)+'</td>').join('')+
-          '<td class="num">'+zbsFmtNum(d.tong||0)+'</td>'+
-          '<td class="num" style="color:var(--c-latest);font-weight:700">'+zbsFmtNum(d.cur)+'</td>'+
-          '<td class="num">'+zbsFmtNum(d.prev)+'</td>'+
-          '<td class="num">'+zbsFmtPct(pc_prev,d.prev,d.cur)+'</td>'+
-          '<td class="num">'+zbsFmtNum(d.same||0)+'</td>'+
-          '<td class="num">'+zbsFmtPct(pc_same,d.same||0,d.cur)+'</td>'+
-          '<td class="num">'+Math.round(d.oa||0)+'</td>'+
-          '<td style="font-size:11px;color:var(--muted);line-height:1.5">'+(d.nhan_xet||'—')+'</td>'+
-          '</tr>';
-      }).join('')}
-    </tbody>
-  </table></div>
-</div>
-
-<div class="chart-card">
-  <h3>Biểu đồ xu hướng theo mục đích</h3>
-  <div class="chart-wrap" style="height:280px"><canvas id="zbs-md-bar"></canvas></div>
+    <tbody id="zbs-md-tbody"></tbody>
+  </table>
+  </div>
 </div>`;
 
-    setTimeout(()=>{
-      const lbs = items.map(d=>d.name.replace('Chưa map mục đích gửi tin','Chưa map'));
-      makeChart('zbs-md-bar','bar',{
-        labels:lbs,
-        datasets:[
-          {label:ls,  data:items.map(d=>d.same||0), backgroundColor:'#7BC99A88',borderRadius:4},
-          {label:lp,  data:items.map(d=>d.prev),     backgroundColor:'#7AA2E388',borderRadius:4},
-          {label:lc,  data:items.map(d=>d.cur),       backgroundColor:'#E6A15A',  borderRadius:4},
-        ]
-      },{plugins:{legend:{position:'top',labels:{color:'#7A8499'}}},
-         scales:{y:{ticks:{callback:v=>zbsFmtNum(v),color:'#7A8499'},grid:{color:'#343747'}},
-                 x:{ticks:{color:'#7A8499'},grid:{color:'#343747'}}}});
-    },50);
+    window._zbs_kh_tuan = khT;
+    filterZBSMucDich();
   }
 
   // ── C. PHÂN LOẠI KH ──
   else if(name==='phanloai'){
-    emptyState('Chưa có dữ liệu phân loại KH theo ZBS trong file hiện tại.<br>Sheet ZBS chỉ cung cấp dữ liệu tổng hợp theo mục đích gửi tin.');
+    emptyState('Chưa có dữ liệu phân loại KH theo ZBS trong file hiện tại.<br>Sheet ZBS chỉ cung cấp dữ liệu tổng hợp theo mục đích.');
   }
 
   // ── D. TOP KH ──
   else if(name==='topkh'){
-    renderZBSTopKH(root);
+    if(!khT.length){ emptyState('Chưa có dữ liệu ZBS KH.'); return; }
+    const top30=khT.slice().sort((a,b)=>b.cur-a.cur).slice(0,30);
+    root.innerHTML=`
+<div style="margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+  <span style="font-size:13px;color:var(--muted)">Top <strong style="color:var(--text)">30</strong> KH ZBS — kỳ <strong style="color:${CUR_TXT}">${lc}</strong></span>
+  <input id="zbs-top-search" placeholder="🔍 Tìm OA hoặc email..." oninput="filterZBSTop()"
+    style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);font-size:12px;outline:none;width:240px">
+</div>
+<div class="chart-card" style="padding:0;overflow:hidden">
+  <div class="table-wrap" style="max-height:560px;overflow-y:auto">
+  <table id="zbs-top-table">
+    <thead><tr>
+      <th>#</th>
+      <th>Tên OA</th>
+      <th style="font-size:10px;color:var(--muted)">Email</th>
+      <th>Phân loại</th>
+      <th>Mục đích</th>
+      <th class="num" style="background:${CUR_BG};color:${CUR_TXT}">${lc}</th>
+      <th class="num" style="background:${CUR_BG};color:${CUR_TXT}">Số OA</th>
+      <th class="num">So sánh tuần trước</th>
+      <th class="num">So sánh cùng kỳ</th>
+    </tr></thead>
+    <tbody id="zbs-top-tbody"></tbody>
+  </table>
+  </div>
+</div>`;
+    window._zbs_top30=top30; window._zbs_top_all=khT;
+    renderZBSTopRows(top30);
   }
 
-  // ── E. CẢNH BÁO ZBS ──
+  // ── E. CẢNH BÁO ──
   else if(name==='alerts'){
-    if(!items.length){
-      emptyState('Chưa có dữ liệu ZBS để phân tích cảnh báo.');
-      return;
-    }
-    const lc=meta.label_cur||'Hiện tại', lp=meta.label_prev||'Kỳ trước';
-    const tong_cur = items.reduce((s,d)=>s+d.cur,0);
-
-    // Build alerts
+    if(!items.length){ emptyState('Chưa có dữ liệu ZBS để phân tích cảnh báo.'); return; }
+    const tong_cur=items.reduce((s,d)=>s+d.cur,0);
     const alerts=[];
     items.forEach(d=>{
-      const pc = d.prev>0 ? d.pct*100 : (d.cur>0?Infinity:0);
-      // Rule 1: giảm mạnh
-      if(d.prev>0 && pc < -30){
-        alerts.push({type:'danger',icon:'🔴',label:'Giảm mạnh',
-          name:d.name, detail:'Giảm '+Math.abs(pc).toFixed(1)+'% so với '+lp+' ('+zbsFmtNum(d.prev)+' → '+zbsFmtNum(d.cur)+')',
-          badge:zbsFmtNum(d.cur)});
-      }
-      // Rule 2: tăng đột biến
-      if(d.prev>0 && pc > 50 && isFinite(pc)){
-        alerts.push({type:'warn',icon:'🟡',label:'Tăng đột biến',
-          name:d.name, detail:'Tăng +'+pc.toFixed(1)+'% so với '+lp+' ('+zbsFmtNum(d.prev)+' → '+zbsFmtNum(d.cur)+')',
-          badge:zbsFmtNum(d.cur)});
-      }
-      // Rule 3: Chưa map cao
-      if(d.name.includes('Chưa map') && tong_cur>0 && d.cur/tong_cur>0.20){
-        alerts.push({type:'warn',icon:'🟠',label:'Chưa map cao',
-          name:d.name, detail:(d.cur/tong_cur*100).toFixed(1)+'% tổng ZBS chưa được map mục đích — ảnh hưởng chất lượng báo cáo.',
-          badge:(d.cur/tong_cur*100).toFixed(1)+'%'});
-      }
-      // Rule 4: OA thấp bất thường
-      if(d.oa<5 && d.cur>10000){
-        alerts.push({type:'info',icon:'⚪',label:'OA thấp bất thường',
-          name:d.name, detail:'Chỉ '+d.oa+' OA phát sinh nhưng volume '+zbsFmtNum(d.cur)+' — kiểm tra phân bổ OA.',
-          badge:d.oa+' OA'});
-      }
+      const pc=d.prev>0?d.pct*100:(d.cur>0?Infinity:0);
+      if(d.prev>0&&pc<-30) alerts.push({type:'danger',icon:'🔴',label:'Giảm mạnh',name:d.name,
+        detail:'Giảm '+Math.abs(pc).toFixed(1)+'% so với '+lp+' ('+zbsFmtNum(d.prev)+' → '+zbsFmtNum(d.cur)+')',badge:zbsFmtNum(d.cur)});
+      if(d.prev>0&&pc>50&&isFinite(pc)) alerts.push({type:'warn',icon:'🟡',label:'Tăng đột biến',name:d.name,
+        detail:'Tăng +'+pc.toFixed(1)+'% so với '+lp,badge:zbsFmtNum(d.cur)});
+      if(d.name.includes('Chưa map')&&tong_cur>0&&d.cur/tong_cur>0.20) alerts.push({type:'warn',icon:'🟠',label:'Chưa map cao',name:d.name,
+        detail:(d.cur/tong_cur*100).toFixed(1)+'% tổng ZBS chưa map mục đích',badge:(d.cur/tong_cur*100).toFixed(1)+'%'});
+      if((d.oa||0)<5&&d.cur>10000) alerts.push({type:'info',icon:'⚪',label:'OA thấp',name:d.name,
+        detail:'Chỉ '+(d.oa||0)+' OA nhưng volume '+zbsFmtNum(d.cur),badge:(d.oa||0)+' OA'});
     });
-
-    const colorMap={danger:'var(--red)',warn:'var(--warn)',info:'var(--muted)'};
-    const bgMap={danger:'rgba(224,107,107,.08)',warn:'rgba(230,161,90,.08)',info:'rgba(122,162,227,.08)'};
-
-    // Update badge
-    const badge = document.getElementById('nb-zbs');
-    if(badge && alerts.length){ badge.style.display=''; badge.textContent=alerts.length; }
-
-    root.innerHTML = alerts.length===0
-      ? '<div class="zbs-empty"><div class="zbs-empty-icon">✅</div><p>Không có cảnh báo ZBS trong kỳ này.</p></div>'
-      : `<div style="margin-bottom:12px;font-size:13px;color:var(--muted)">${alerts.length} cảnh báo ZBS — kỳ <strong style="color:var(--c-latest)">${lc}</strong></div>
-         <div style="display:flex;flex-direction:column;gap:10px">
-           ${alerts.map(a=>`
-             <div class="chart-card" style="background:${bgMap[a.type]};border-color:${colorMap[a.type]}44;padding:14px 18px;display:flex;align-items:flex-start;gap:14px">
-               <span style="font-size:22px;flex-shrink:0">${a.icon}</span>
-               <div style="flex:1">
-                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
-                   <span style="font-size:13px;font-weight:700;color:${colorMap[a.type]}">${a.label}</span>
-                   <span style="font-size:11px;color:var(--muted)">${a.name}</span>
-                 </div>
-                 <div style="font-size:12px;color:var(--dim)">${a.detail}</div>
-               </div>
-               <span style="font-size:13px;font-weight:700;color:${colorMap[a.type]};flex-shrink:0">${a.badge}</span>
-             </div>`).join('')}
-         </div>`;
+    const clr={danger:'var(--red)',warn:'var(--warn)',info:'var(--muted)'};
+    const bg={danger:'rgba(224,107,107,.08)',warn:'rgba(230,161,90,.08)',info:'rgba(122,162,227,.08)'};
+    const badge=document.getElementById('nb-zbs');
+    if(badge&&alerts.length){badge.style.display='';badge.textContent=alerts.length;}
+    root.innerHTML=alerts.length===0
+      ?'<div class="zbs-empty"><div class="zbs-empty-icon">✅</div><p>Không có cảnh báo ZBS.</p></div>'
+      :`<div style="margin-bottom:12px;font-size:13px;color:var(--muted)">${alerts.length} cảnh báo ZBS — kỳ <strong style="color:${CUR_TXT}">${lc}</strong></div>
+       <div style="display:flex;flex-direction:column;gap:10px">
+         ${alerts.map(a=>`<div class="chart-card" style="background:${bg[a.type]};border-color:${clr[a.type]}44;padding:14px 18px;display:flex;align-items:flex-start;gap:14px">
+           <span style="font-size:22px;flex-shrink:0">${a.icon}</span>
+           <div style="flex:1"><div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+             <span style="font-size:13px;font-weight:700;color:${clr[a.type]}">${a.label}</span>
+             <span style="font-size:11px;color:var(--muted)">${a.name}</span></div>
+             <div style="font-size:12px;color:var(--dim)">${a.detail}</div></div>
+           <span style="font-size:13px;font-weight:700;color:${clr[a.type]};flex-shrink:0">${a.badge}</span>
+         </div>`).join('')}
+       </div>`;
   }
 
   // ── F. CHI TIẾT KH ──
   else if(name==='detail'){
-    renderZBSDetailSearch(root);
-  }
-
-  // ── G. NHẬN XÉT ZBS ──
-  else if(name==='insights'){
-    if(!items.length){
-      emptyState('Chưa có dữ liệu ZBS để phân tích nhận xét.');
-      return;
-    }
-    const lc=meta.label_cur||'Hiện tại', lp=meta.label_prev||'Kỳ trước';
-    const tong_cur  = items.reduce((s,d)=>s+d.cur,0);
-    const tong_prev = items.reduce((s,d)=>s+d.prev,0);
-    const tong_diff = tong_cur-tong_prev;
-    const tong_pct  = tong_prev>0 ? (tong_diff/tong_prev*100) : null;
-
-    // Sorted by volume
-    const sorted_cur  = [...items].filter(d=>!d.name.includes('Chưa map')).sort((a,b)=>b.cur-a.cur);
-    const sorted_diff = [...items].filter(d=>!d.name.includes('Chưa map')&&d.prev>0).sort((a,b)=>b.pct-a.pct);
-    const tang_nhat = sorted_diff[0];
-    const giam_nhat = sorted_diff[sorted_diff.length-1];
-    const chua_map  = items.find(d=>d.name.includes('Chưa map'));
-    const chua_map_pct = chua_map&&tong_cur>0 ? chua_map.cur/tong_cur*100 : 0;
-
-    // Section 1: từ file
-    const has_file_notes = items.some(d=>d.nhan_xet&&d.nhan_xet.trim());
-
-    // Section 2: rule-based
-    const trend_color = tong_pct>=0 ? 'var(--success)' : 'var(--red)';
-    const trend_icon  = tong_pct>=0 ? '📈' : '📉';
-
-    // Section 3: gợi ý
-    const suggestions=[];
-    if(tong_pct!==null&&tong_pct<-15) suggestions.push('⚠️ Tổng ZBS giảm '+Math.abs(tong_pct).toFixed(1)+'% — theo dõi sát và xác định nguyên nhân từng mục đích.');
-    if(tang_nhat&&tang_nhat.pct*100>20) suggestions.push('💡 <strong>'+tang_nhat.name+'</strong> tăng mạnh — duy trì và đánh giá nâng gói OA.');
-    if(giam_nhat&&giam_nhat.pct*100<-20) suggestions.push('📞 <strong>'+giam_nhat.name+'</strong> giảm — liên hệ KH/partner để xác định nguyên nhân.');
-    if(chua_map_pct>15) suggestions.push('🗂️ <strong>'+chua_map_pct.toFixed(1)+'%</strong> ZBS chưa được map mục đích — đề nghị cập nhật phân loại để báo cáo chính xác hơn.');
-    if(!suggestions.length) suggestions.push('✅ Không có gợi ý đặc biệt — ZBS đang ổn định.');
-
-    root.innerHTML = `
-<!-- Section 1: Nhận xét từ file -->
-${has_file_notes ? `
-<div class="insight-box" style="margin-bottom:16px">
-  <h4>📋 Nhận xét từ file dữ liệu</h4>
-  <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-    ${items.filter(d=>d.nhan_xet&&d.nhan_xet.trim()).map(d=>`
-      <div style="display:flex;gap:10px;font-size:13px">
-        <span style="color:var(--accent2);font-weight:600;flex-shrink:0">${d.name.replace('Chưa map mục đích gửi tin','Chưa map')}:</span>
-        <span style="color:var(--dim)">${d.nhan_xet}</span>
-      </div>`).join('')}
-  </div>
-</div>` : ''}
-
-<!-- Section 2: Phân tích tự động -->
-<div class="insight-box" style="margin-bottom:16px">
-  <h4>${trend_icon} Phân tích tự động — ${lc}</h4>
-  <p style="margin:10px 0 6px">
-    Tổng ZBS kỳ này <strong style="color:${trend_color}">${zbsFmtNum(tong_cur)}</strong>
-    (${lp}: ${zbsFmtNum(tong_prev)})
-    — ${tong_pct!==null ? (tong_pct>=0?'<span style="color:var(--success)">tăng +':'<span style="color:var(--red)">giảm ')+Math.abs(tong_pct).toFixed(1)+'%</span>':'không có data kỳ trước'}.
-  </p>
-  ${tang_nhat ? `<p style="font-size:12px;color:var(--dim)">📈 Tăng mạnh nhất: <strong>${tang_nhat.name}</strong> (${zbsFmtPct(tang_nhat.pct*100,tang_nhat.prev,tang_nhat.cur)})</p>` : ''}
-  ${giam_nhat&&giam_nhat.pct<0 ? `<p style="font-size:12px;color:var(--dim)">📉 Giảm mạnh nhất: <strong>${giam_nhat.name}</strong> (${zbsFmtPct(giam_nhat.pct*100,giam_nhat.prev,giam_nhat.cur)})</p>` : ''}
-  ${chua_map_pct>15 ? `<p style="font-size:12px;color:var(--warn)">⚠️ Chưa map: ${chua_map_pct.toFixed(1)}% tổng ZBS — cần cập nhật phân loại.</p>` : ''}
-  <div style="margin-top:12px">
-    <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Phân bổ ${lc}:</div>
-    ${sorted_cur.map(d=>{
-      const w=tong_cur>0?d.cur/tong_cur*100:0;
-      return '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px">'+
-        '<div style="width:120px;flex-shrink:0;color:var(--dim)">'+d.name.replace('Chưa map mục đích gửi tin','Chưa map')+'</div>'+
-        '<div style="flex:1;background:var(--surface2);border-radius:4px;height:8px">'+
-          '<div style="width:'+Math.min(w,100).toFixed(1)+'%;background:var(--c-latest);border-radius:4px;height:100%"></div>'+
-        '</div>'+
-        '<div style="width:50px;text-align:right;color:var(--text)">'+w.toFixed(1)+'%</div>'+
-        '</div>';
-    }).join('')}
+    const allKH = khT.length ? khT : khM;
+    root.innerHTML=`
+<div style="margin-bottom:16px">
+  <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Tìm KH theo tên OA hoặc email:</div>
+  <div style="display:flex;gap:8px">
+    <input id="zbs-det-q" placeholder="Nhập tên OA hoặc email..."
+      style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;outline:none"
+      oninput="searchZBSKH(this.value)">
   </div>
 </div>
+<div id="zbs-det-result">
+  <!-- Show all by default -->
+</div>`;
+    searchZBSKH('');
+  }
 
-<!-- Section 3: Gợi ý hành động -->
-<div class="insight-box">
-  <h4>⚡ Gợi ý hành động CSS</h4>
+  // ── G. NHẬN XÉT ──
+  else if(name==='insights'){
+    if(!items.length){ emptyState('Chưa có dữ liệu ZBS để phân tích.'); return; }
+    const tong_cur=items.reduce((s,d)=>s+d.cur,0);
+    const tong_prev=items.reduce((s,d)=>s+d.prev,0);
+    const tong_pct=tong_prev>0?(tong_cur-tong_prev)/tong_prev*100:null;
+    const trend_color=tong_pct>=0?'var(--success)':'var(--red)';
+    const has_notes=items.some(d=>d.nhan_xet&&d.nhan_xet.trim());
+    const non_map=items.filter(d=>!d.name.includes('Chưa map')&&d.prev>0).sort((a,b)=>b.pct-a.pct);
+    const tang_nhat=non_map[0], giam_nhat=non_map[non_map.length-1];
+    const chua_map=items.find(d=>d.name.includes('Chưa map'));
+    const cm_pct=chua_map&&tong_cur>0?chua_map.cur/tong_cur*100:0;
+    const sugg=[];
+    if(tong_pct!==null&&tong_pct<-15) sugg.push('⚠️ Tổng ZBS giảm '+Math.abs(tong_pct).toFixed(1)+'% — theo dõi sát.');
+    if(tang_nhat&&tang_nhat.pct*100>20) sugg.push('💡 <strong>'+tang_nhat.name+'</strong> tăng mạnh — duy trì và đánh giá nâng gói OA.');
+    if(giam_nhat&&giam_nhat.pct*100<-20) sugg.push('📞 <strong>'+giam_nhat.name+'</strong> giảm — liên hệ xác định nguyên nhân.');
+    if(cm_pct>15) sugg.push('🗂️ <strong>'+cm_pct.toFixed(1)+'%</strong> ZBS chưa được map mục đích — đề nghị cập nhật phân loại.');
+    if(!sugg.length) sugg.push('✅ Không có gợi ý đặc biệt — ZBS đang ổn định.');
+    root.innerHTML=`
+${has_notes?`<div class="insight-box" style="margin-bottom:16px"><h4>📋 Nhận xét từ file dữ liệu</h4>
   <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-    ${suggestions.map(s=>'<p style="font-size:13px;color:var(--dim)">'+s+'</p>').join('')}
+    ${items.filter(d=>d.nhan_xet&&d.nhan_xet.trim()).map(d=>`<div style="display:flex;gap:10px;font-size:13px">
+      <span style="color:${CUR_TXT};font-weight:600;flex-shrink:0">${d.name.replace('Chưa map mục đích gửi tin','Chưa map')}:</span>
+      <span style="color:var(--dim)">${d.nhan_xet}</span></div>`).join('')}
+  </div></div>`:''}
+<div class="insight-box" style="margin-bottom:16px"><h4>${tong_pct>=0?'📈':'📉'} Phân tích tự động — ${lc}</h4>
+  <p style="margin:10px 0 6px">Tổng ZBS <strong style="color:${trend_color}">${zbsFmtNum(tong_cur)}</strong> (${lp}: ${zbsFmtNum(tong_prev)})
+  — ${tong_pct!==null?'<span style="color:'+trend_color+'">'+(tong_pct>=0?'+':'')+tong_pct.toFixed(1)+'%</span>':'không có data kỳ trước'}.</p>
+  ${tang_nhat?`<p style="font-size:12px;color:var(--dim)">📈 Tăng mạnh nhất: <strong>${tang_nhat.name}</strong> (${zbsFmtPct(tang_nhat.pct*100,tang_nhat.prev,tang_nhat.cur)})</p>`:''}
+  ${giam_nhat&&giam_nhat.pct<0?`<p style="font-size:12px;color:var(--dim)">📉 Giảm mạnh nhất: <strong>${giam_nhat.name}</strong> (${zbsFmtPct(giam_nhat.pct*100,giam_nhat.prev,giam_nhat.cur)})</p>`:''}
+  ${cm_pct>15?`<p style="font-size:12px;color:var(--warn)">⚠️ Chưa map: ${cm_pct.toFixed(1)}% — cần cập nhật.</p>`:''}
+</div>
+<div class="insight-box"><h4>⚡ Gợi ý hành động CSS</h4>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+    ${sugg.map(s=>'<p style="font-size:13px;color:var(--dim)">'+s+'</p>').join('')}
   </div>
 </div>`;
   }
 }
+
+
 function initZBS(){
   _zbsTabDone={};
   const activeSub=document.querySelector('.zbs-sub.active');
