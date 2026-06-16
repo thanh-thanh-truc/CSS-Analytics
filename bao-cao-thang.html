@@ -751,16 +751,19 @@ function updateOverview(){
 
   document.getElementById('ov-kpi-grid').innerHTML=`
   <div class="kpi-card latest"><div class="kpi-label">Tin Thành Công ${_lc}</div><div class="kpi-value">${fmt(w53.tc)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(w53.tc)}</div>
     <div class="kpi-row">
       <div class="kpi-cmp ${pct(w53.tc,w52.tc)>=0?'up':'down'}"><span class="dot" style="background:var(--c-prev)"></span>${pctStr(w53.tc,w52.tc)} vs ${_lp}</div>
       <div class="kpi-cmp ${pct(w53.tc,w43.tc)>=0?'up':'down'}"><span class="dot" style="background:var(--c-month)"></span>${pctStr(w53.tc,w43.tc)} vs ${_ls}</div>
     </div></div>
   <div class="kpi-card danger"><div class="kpi-label">Tin Thất Bại ${_lc}</div><div class="kpi-value">${fmt(w53.tb)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(w53.tb)}</div>
     <div class="kpi-row">
       <div class="kpi-cmp neutral">Tỉ lệ: ${failPct}%</div>
       <div class="kpi-cmp ${pct(w53.tb,w52.tb)>=0?'down':'up'}"><span class="dot" style="background:var(--c-prev)"></span>${pctStr(w53.tb,w52.tb)} vs Tháng Trước</div>
     </div></div>
   <div class="kpi-card"><div class="kpi-label">Tổng Tin Gửi ${_lc}</div><div class="kpi-value">${fmt(w53.tg)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(w53.tg)}</div>
     <div class="kpi-row">
       <div class="kpi-cmp ${pct(w53.tg,w52.tg)>=0?'up':'down'}"><span class="dot" style="background:var(--c-prev)"></span>${pctStr(w53.tg,w52.tg)} vs Tháng Trước</div>
       <div class="kpi-cmp ${pct(w53.tg,w43.tg)>=0?'up':'down'}"><span class="dot" style="background:var(--c-month)"></span>${pctStr(w53.tg,w43.tg)} vs Tháng Trước Nữa</div>
@@ -2412,16 +2415,19 @@ function renderZBSDetailForEmail(email){
   <div class="kpi-card latest">
     <div class="kpi-label">Tổng ZBS ${lc}</div>
     <div class="kpi-value">${zbsFmtNum(cur.tong)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(cur.tong)}</div>
     <div class="kpi-row"><div class="kpi-cmp ${pct>=0?'up':'down'}">${zbsFmtPct(pct,prev_tong,cur.tong)} vs ${lp}</div></div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">Zalo Ưu Tiên</div>
     <div class="kpi-value">${zbsFmtNum(cur.ut)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(cur.ut)}</div>
     <div class="kpi-row"><div class="kpi-cmp neutral">${prev?zbsFmtPct((cur.ut-(prev.ut||0))/(prev.ut||1)*100,prev.ut||0,cur.ut):'—'} vs ${lp}</div></div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">Zalo Bình Thường</div>
     <div class="kpi-value">${zbsFmtNum(cur.bt)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(cur.bt)}</div>
     <div class="kpi-row"><div class="kpi-cmp neutral">${prev?zbsFmtPct((cur.bt-(prev.bt||0))/(prev.bt||1)*100,prev.bt||0,cur.bt):'—'} vs ${lp}</div></div>
   </div>
   <div class="kpi-card">
@@ -2566,6 +2572,7 @@ function zbsFmtPct(pct, prev, cur){
   return '<span style="color:'+color+'">'+(pct>=0?'+':'')+pct.toFixed(1)+'%</span>';
 }
 function zbsFmtNum(n){ return n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':String(Math.round(n)); }
+function fmtFull(n){ n=Math.round(n||0); return n.toLocaleString('vi-VN'); }
 
 function renderZBSTab(name){
   const root = document.getElementById('zbs-'+name+'-root');
@@ -2601,15 +2608,18 @@ function renderZBSTab(name){
     <div class="kpi-card latest">
       <div class="kpi-label">Tổng ZBS ${lc}</div>
       <div class="kpi-value">${zbsFmtNum(tong_cur)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_cur)}</div>
       <div class="kpi-row"><div class="kpi-cmp ${tong_pct>=0?'up':'down'}">${zbsFmtPct(tong_pct,tong_prev,tong_cur)} vs ${lp}</div></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Kỳ trước (${lp})</div>
       <div class="kpi-value">${zbsFmtNum(tong_prev)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_prev)}</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Cùng kỳ (${ls})</div>
       <div class="kpi-value">${zbsFmtNum(tong_same)}</div>
+    <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(tong_same)}</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Tổng OA phát sinh</div>
@@ -3731,13 +3741,16 @@ getOvData = function(lt){
 const _origInitSlKh = initSlKh;
 pageInits['sl_kh'] = function(){
   if(!window.__uploaded){ _origInitSlKh(); return; }
-  // Temporarily patch PHANLOAI, PL_LT, LT_PL for this call
-  const saved={PL_LT_W53,PL_LT_W52,LT_PL_W53,LT_PL_W52};
-  // Can't reassign const, so we inject via a wrapper approach on the render data:
-  // The render uses PHANLOAI, PL_LT_W53 etc. — we store in window.__PHANLOAI and patch the function body is hard.
-  // Simpler: directly call with patched global references using a trick.
-  // We'll build the chart/table manually here:
-  _renderSlKH(PHANLOAI||{}, PL_LT_W53||{}, PL_LT_W52||{}, LT_PL_W53||{}, LT_PL_W52||{}, window.__LABELS||{cur:'Hiện tại',prev:'Tháng trước',same:'Cùng kỳ'});
+  const _ph53=PHANLOAI.w53||{}, _ph52=PHANLOAI.w52||{}, _ph43=PHANLOAI.w43||{};
+  const _plFlat={};
+  [...new Set([...Object.keys(_ph53),...Object.keys(_ph52),...Object.keys(_ph43)])].forEach(k=>{
+    const nk=normalizePL(k)||k;
+    if(!_plFlat[nk]) _plFlat[nk]={'1':0,'2':0,'3':0};
+    _plFlat[nk]['1']+=(_ph43[k]||{}).tc||0;
+    _plFlat[nk]['2']+=(_ph52[k]||{}).tc||0;
+    _plFlat[nk]['3']+=(_ph53[k]||{}).tc||0;
+  });
+  _renderSlKH(_plFlat, PL_LT_W53||{}, PL_LT_W52||{}, LT_PL_W53||{}, LT_PL_W52||{}, window.__LABELS||{cur:'Hiện tại',prev:'Tháng trước',same:'Cùng kỳ'});
 };
 pageInits['sl_kh']
 
@@ -3786,15 +3799,20 @@ function _renderSlKH(pl, pl_lt_cur, pl_lt_prev, lt_pl_cur, lt_pl_prev, labels){
 const _origInitSlLoaiTin = initSlLoaiTin;
 pageInits['sl_loaitin'] = function(){
   if(!window.__uploaded){ _origInitSlLoaiTin(); return; }
-  const lt = LOAITIN||{};
+  // Build lt from LT_W53/W52/W43 (correct multi-period format)
+  const _lt53=LT_W53||{}, _lt52=LT_W52||{}, _lt43=LT_W43||{};
+  const lt={};
+  [...new Set([...Object.keys(_lt53),...Object.keys(_lt52),...Object.keys(_lt43)])].forEach(k=>{
+    lt[k]={'1':(_lt43[k]||{}).tc||0,'2':(_lt52[k]||{}).tc||0,'3':(_lt53[k]||{}).tc||0};
+  });
   const ltKeys=Object.keys(lt).filter(k=>(lt[k]['1']||0)+(lt[k]['2']||0)+(lt[k]['3']||0)>0);
-  const LTs=LT_W43||{}, labels=window.__LABELS||{};
+  const labels=window.__LABELS||{};
   makeChart('lt-chart-bar','bar',{
     labels:ltKeys,
     datasets:[
-      {label:labels.same||'Cùng kỳ', data:ltKeys.map(k=>{const v=LTs[k];return v?v.tc||0:0;}),backgroundColor:WC.month,borderRadius:6},
+      {label:labels.same||'Cùng kỳ',   data:ltKeys.map(k=>lt[k]['1']||0),backgroundColor:WC.month,borderRadius:6},
       {label:labels.prev||'Tháng trước', data:ltKeys.map(k=>lt[k]['2']||0),backgroundColor:WC.prev,borderRadius:6},
-      {label:labels.cur||'Hiện tại',   data:ltKeys.map(k=>lt[k]['3']||0),backgroundColor:WC.latest,borderRadius:6},
+      {label:labels.cur||'Hiện tại',    data:ltKeys.map(k=>lt[k]['3']||0),backgroundColor:WC.latest,borderRadius:6},
     ]
   },{plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>fmt(v)}}}});
   const tbody=document.getElementById('lt-tbody');
