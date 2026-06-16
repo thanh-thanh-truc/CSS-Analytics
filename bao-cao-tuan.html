@@ -1195,7 +1195,7 @@ function renderAlerts(){
   container.innerHTML=`<div class="chart-card" style="padding:0;overflow:hidden">
     <div class="table-wrap" style="max-height:640px;overflow-y:auto">
     <table><thead><tr>
-      <th>Email KH</th><th>Phân Loại</th><th>Loại Tin</th><th>Loại Cảnh Báo</th>
+      <th>Email KH</th><th>Phân Loại</th><th>Loại Tin Tăng</th><th>Loại Cảnh Báo</th>
       <th class="num">Tuần 4 Tháng 4</th><th class="num">Tuần 3 Tháng 5</th><th class="num">Tuần 4 Tháng 5</th>
       <th class="num">SL Giảm</th><th class="num">% Giảm</th>
       <th class="num">SL Thất Bại</th><th class="num">% Thất Bại</th>
@@ -1272,7 +1272,16 @@ function renderTang(){
       rows.push({email:item.email,phanloai:item.phanloai,lt:'(Tổng)',
         t4w3:compRow.tc_w43,t5w2:item.tc_w52,t5w3:item.tc_w53,volInc:vi,pctInc:item.chg});
     } else {
-      allLt.forEach(lt=>{
+      // Chỉ show loại tin tăng (vi > 0) để rõ nguyên nhân KH tăng
+      const increasingLt = allLt.filter(lt=>{
+        const b53=bd53[lt]||{tc:0}; const b52=bd52[lt]||{tc:0};
+        return b53.tc > b52.tc;
+      }).sort((a,b)=>{
+        return ((bd53[b]||{tc:0}).tc-(bd52[b]||{tc:0}).tc) -
+               ((bd53[a]||{tc:0}).tc-(bd52[a]||{tc:0}).tc);
+      });
+      const ltToShow = increasingLt.length > 0 ? increasingLt : allLt.slice(0,1);
+      ltToShow.forEach(lt=>{
         const b53=bd53[lt]||{tc:0};
         const b52=bd52[lt]||{tc:0};
         const vi=b53.tc-b52.tc;
