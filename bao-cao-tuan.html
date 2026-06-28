@@ -376,7 +376,7 @@ tr.row-both td:first-child{border-left:2px solid #E06B6B;}
     <div class="chart-card"><h3>Task Theo Nhân Viên × Tuần</h3><div class="chart-wrap"><canvas id="wl-chart-member"></canvas></div></div>
     <div class="chart-card"><h3>Trạng Thái Task — Tuần 4 Tháng 5</h3><div class="chart-wrap"><canvas id="wl-chart-status"></canvas></div></div>
   </div>
-  <div class="section-title"><span class="dot"></span>So Sánh Nhân Viên Tuần 4 Tháng 5 vs ${_lp}</div>
+  <div class="section-title"><span class="dot"></span>So Sánh Nhân Viên Tuần 4 Tháng 5 vs Tuần 3 Tháng 5</div>
   <div class="chart-card" id="wl-member-list"></div>
 </div>
 
@@ -660,7 +660,7 @@ function showKHDetail(email){
       </div>
     </div>
     <div style="background:var(--surface2);border-radius:8px;padding:8px 14px;flex:1;min-width:120px">
-      <div style="font-size:10px;color:var(--muted)">% vs ${_lp}</div>
+      <div style="font-size:10px;color:var(--muted)">% vs Tuần 3 Tháng 5</div>
       <div style="font-size:15px;font-weight:800;color:${clrPct(chg52)}">${chg52!==null?(chg52>=0?'+':'')+chg52.toFixed(1)+'%':'—'}</div>
     </div>
     <div style="background:var(--surface2);border-radius:8px;padding:8px 14px;flex:1;min-width:120px">
@@ -764,12 +764,12 @@ function updateOverview(){
     <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(w53.tb)}</div>
     <div class="kpi-row">
       <div class="kpi-cmp neutral">Tỉ lệ: ${failPct}%</div>
-      <div class="kpi-cmp ${pct(w53.tb,w52.tb)>=0?'down':'up'}"><span class="dot" style="background:var(--c-prev)"></span>${pctStr(w53.tb,w52.tb)} vs ${_lp}</div>
+      <div class="kpi-cmp ${pct(w53.tb,w52.tb)>=0?'down':'up'}"><span class="dot" style="background:var(--c-prev)"></span>${pctStr(w53.tb,w52.tb)} vs Tuần 3 Tháng 5</div>
     </div></div>
   <div class="kpi-card"><div class="kpi-label">Tổng Tin Gửi ${_lc}</div><div class="kpi-value">${fmt(w53.tg)}</div>
     <div class="kpi-sub-detail" style="font-size:11px;color:#94A3B8;margin-top:2px">${fmtFull(w53.tg)}</div>
     <div class="kpi-row">
-      <div class="kpi-cmp ${pct(w53.tg,w52.tg)>=0?'up':'down'}"><span class="dot" style="background:var(--c-prev)"></span>${pctStr(w53.tg,w52.tg)} vs ${_lp}</div>
+      <div class="kpi-cmp ${pct(w53.tg,w52.tg)>=0?'up':'down'}"><span class="dot" style="background:var(--c-prev)"></span>${pctStr(w53.tg,w52.tg)} vs Tuần 3 Tháng 5</div>
       <div class="kpi-cmp ${pct(w53.tg,w43.tg)>=0?'up':'down'}"><span class="dot" style="background:var(--c-month)"></span>${pctStr(w53.tg,w43.tg)} vs Tuần 4 Tháng 4</div>
     </div></div>
   <div class="kpi-card"><div class="kpi-label">Số KH Hoạt Động</div><div class="kpi-value">${w53.kh}</div>
@@ -841,7 +841,7 @@ function initSlKh(){
   const chgs=plKeys.map(k=>{const w2=pl[k]['2']||0,w3=pl[k]['3']||0;return w2?(w3-w2)/w2*100:0;});
   const chgChart=makeChart('slkh-chart-chg','bar',{
     labels:plKeys,
-    datasets:[{label:'% Thay đổi vs '+_lp,data:chgs,backgroundColor:chgs.map(v=>v>=0?WC.latest:WC.prev),borderRadius:6}]
+    datasets:[{label:'% Thay đổi vs Tuần 3 Tháng 5',data:chgs,backgroundColor:chgs.map(v=>v>=0?WC.latest:WC.prev),borderRadius:6}]
   },{plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v.toFixed(0)+'%'}}}});
   if(chgChart) chgChart._isPctChart=true;
 
@@ -946,7 +946,7 @@ function initWorkload(){
   const ht=WL_STATUS_W3['Hoàn thành']||0;
   const tc_w=WL_STATUS_W3['Từ chối']||0;
   document.getElementById('wl-kpi').innerHTML=`
-    <div class="kpi-card latest"><div class="kpi-label">Tổng Task Tuần 4 Tháng 5</div><div class="kpi-value">${totalW3}</div><div class="kpi-row"><div class="kpi-cmp ${chgWl>=0?'up':'down'}">${pctStr(totalW3,totalW2)} vs ${_lp}</div></div></div>
+    <div class="kpi-card latest"><div class="kpi-label">Tổng Task Tuần 4 Tháng 5</div><div class="kpi-value">${totalW3}</div><div class="kpi-row"><div class="kpi-cmp ${chgWl>=0?'up':'down'}">${pctStr(totalW3,totalW2)} vs Tuần 3 Tháng 5</div></div></div>
     <div class="kpi-card success"><div class="kpi-label">Hoàn Thành</div><div class="kpi-value">${ht}</div><div class="kpi-row"><div class="kpi-cmp neutral">${(ht/totalW3*100).toFixed(0)}% tỉ lệ HT</div></div></div>
     <div class="kpi-card warn"><div class="kpi-label">Đang Chờ</div><div class="kpi-value">${totalW3-ht-tc_w}</div><div class="kpi-row"><div class="kpi-cmp neutral">Chưa hoàn thành</div></div></div>
     <div class="kpi-card danger"><div class="kpi-label">Từ Chối</div><div class="kpi-value">${tc_w}</div></div>`;
@@ -2011,71 +2011,6 @@ function initInsights(){
 }
 
 
-
-
-// Chọn đúng 3 kỳ so sánh tuần:
-// current = tuần/tháng mới nhất
-// previous = tuần liền kề trước
-// same = cùng số tuần của tháng trước; nếu không có thì lấy tuần gần nhất trong tháng trước
-function parseTuanThangLabel_(label){
-  const text = String(label || '')
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .toLowerCase();
-  const m = text.match(/tuan\s*(\d+)\s*thang\s*(\d+)/);
-  if(!m) return null;
-  return {
-    tuan: Number(m[1]),
-    thang: Number(m[2]),
-    key: `T${Number(m[1])}-M${Number(m[2])}`,
-    label: String(label || '').trim()
-  };
-}
-
-function sortTuanThang_(a,b){
-  return a.thang !== b.thang ? a.thang - b.thang : a.tuan - b.tuan;
-}
-
-function pickComparePeriods_(periods){
-  const list = (periods || [])
-    .filter(Boolean)
-    .map(p => ({...p, thang:+p.thang||0, tuan:+p.tuan||0, label:p.label || `Tuần ${p.tuan} Tháng ${p.thang}`}))
-    .filter(p => p.thang > 0 && p.tuan > 0)
-    .sort(sortTuanThang_);
-
-  if(!list.length) return {cur:null, prev:null, same:null};
-
-  const cur = list[list.length - 1];
-  const prev = [...list].reverse().find(p =>
-    p.thang < cur.thang || (p.thang === cur.thang && p.tuan < cur.tuan)
-  ) || null;
-
-  let same = list.find(p => p.thang === cur.thang - 1 && p.tuan === cur.tuan) || null;
-
-  // Nếu tháng trước không có đúng cùng số tuần, lấy tuần gần nhất của tháng trước
-  if(!same){
-    same = list
-      .filter(p => p.thang === cur.thang - 1)
-      .sort((a,b) => Math.abs(a.tuan - cur.tuan) - Math.abs(b.tuan - cur.tuan) || b.tuan - a.tuan)[0] || null;
-  }
-
-  return {cur, prev, same};
-}
-
-function pickCompareLabels_(periodLabels){
-  const parsed = (periodLabels || [])
-    .map(label => parseTuanThangLabel_(label))
-    .filter(Boolean);
-  const picked = pickComparePeriods_(parsed);
-  return {
-    cur: picked.cur ? picked.cur.label : ((periodLabels || [])[periodLabels.length - 1] || 'Hiện tại'),
-    prev: picked.prev ? picked.prev.label : ((periodLabels || [])[periodLabels.length - 2] || 'Tuần trước'),
-    same: picked.same ? picked.same.label : 'Cùng kỳ tháng trước',
-    picked
-  };
-}
-
 // ══════════════════════════════════════════════
 // ZBS PARSER — Batch 2
 // ══════════════════════════════════════════════
@@ -2180,10 +2115,25 @@ function parseZBSTuan(workbook){
     });
   }
 
-  var pickedLabels = pickCompareLabels_(period_labels);
-  var label_cur  = pickedLabels.cur;
-  var label_prev = pickedLabels.prev;
-  var label_same = pickedLabels.same;
+  function parsePeriodLabel_(lbl){
+    var m = String(lbl || '').match(/T\s*(\d+)\s*-?\s*Tháng\s*(\d+)/i);
+    return m ? {tuan:+m[1], thang:+m[2], label:String(lbl).trim()} : null;
+  }
+  var parsedPeriods = period_labels.map(parsePeriodLabel_).filter(Boolean)
+    .sort(function(a,b){ return a.thang!==b.thang ? a.thang-b.thang : a.tuan-b.tuan; });
+  var pCurLabel  = parsedPeriods[parsedPeriods.length-1] || null;
+  var pPrevLabel = parsedPeriods[parsedPeriods.length-2] || null;
+  var pSameLabel = null;
+  if(pCurLabel){
+    pSameLabel = parsedPeriods.find(function(p){ return p.thang === pCurLabel.thang - 1 && p.tuan === pCurLabel.tuan; }) || null;
+    if(!pSameLabel){
+      var lastMonth = parsedPeriods.filter(function(p){ return p.thang === pCurLabel.thang - 1; });
+      pSameLabel = lastMonth[lastMonth.length - 1] || parsedPeriods[0] || null;
+    }
+  }
+  var label_cur  = (pCurLabel && pCurLabel.label) || period_labels[period_labels.length-1] || 'Hiện tại';
+  var label_prev = (pPrevLabel && pPrevLabel.label) || period_labels[period_labels.length-2] || 'Kỳ trước';
+  var label_same = (pSameLabel && pSameLabel.label) || period_labels[0] || 'Cùng kỳ';
 
   console.log('[ZBS Tuần] Parsed', muc_dich.length, 'mục đích | cur='+tong_cur+' | labels:', label_cur, label_prev, label_same);
   if(missing.length) console.warn('[ZBS Tuần] Missing:', missing);
@@ -3548,20 +3498,33 @@ function remapData(rows){
       const key = `${th}_${tu}`;
       if(!periodSet[key]) periodSet[key]={thang:th,tuan:tu,key,label:`Tuần ${tu} Tháng ${th}`};
     });
-    const periods = Object.values(periodSet).sort(sortTuanThang_);
-    const picked = pickComparePeriods_(periods);
-
-    if(picked.cur){
-      cur = rows.filter(r=>+r._thang===picked.cur.thang && +r._tuan===picked.cur.tuan);
-      labelCur = picked.cur.label;
-    }
-    if(picked.prev){
-      prev = rows.filter(r=>+r._thang===picked.prev.thang && +r._tuan===picked.prev.tuan);
-      labelPrev = picked.prev.label;
-    }
-    if(picked.same){
-      smth = rows.filter(r=>+r._thang===picked.same.thang && +r._tuan===picked.same.tuan);
-      labelSame = picked.same.label;
+    const periods = Object.values(periodSet).sort((a,b)=>
+      a.thang!==b.thang ? a.thang-b.thang : a.tuan-b.tuan
+    );
+    // Correct weekly compare:
+    // current = latest week/month in uploaded file
+    // previous = immediately previous period in chronological order
+    // same_month = same week of previous month, e.g. Week 4 Month 6 -> Week 4 Month 5
+    // If exact same-week-last-month is missing, fallback to latest available week of previous month.
+    if(periods.length>=3){
+      const p1 = periods[periods.length-1];
+      const p2 = periods[periods.length-2];
+      let p3 = periods.find(p => p.thang === p1.thang - 1 && p.tuan === p1.tuan) || null;
+      if(!p3){
+        const lastMonthPeriods = periods.filter(p => p.thang === p1.thang - 1);
+        p3 = lastMonthPeriods[lastMonthPeriods.length - 1] || periods[0];
+      }
+      cur  = rows.filter(r=>+r._thang===p1.thang&&+r._tuan===p1.tuan);
+      prev = rows.filter(r=>+r._thang===p2.thang&&+r._tuan===p2.tuan);
+      smth = rows.filter(r=>+r._thang===p3.thang&&+r._tuan===p3.tuan);
+      labelCur=p1.label; labelPrev=p2.label; labelSame=p3.label;
+    } else if(periods.length===2){
+      const [p1,p2]=[periods[1],periods[0]];
+      cur=rows.filter(r=>+r._thang===p1.thang&&+r._tuan===p1.tuan);
+      prev=rows.filter(r=>+r._thang===p2.thang&&+r._tuan===p2.tuan);
+      labelCur=p1.label; labelPrev=p2.label;
+    } else if(periods.length===1){
+      cur=rows; labelCur=periods[0].label;
     }
   }
 
@@ -4168,7 +4131,14 @@ function parseTicketSheet(ws, labels){
   const periods=Object.values(periodSet).sort((a,b)=>a.thang!==b.thang?a.thang-b.thang:a.tuan-b.tuan);
   const pCur  = periods[periods.length-1]||null;
   const pPrev = periods[periods.length-2]||null;
-  const pSame = periods[0]||null;
+  let pSame = null;
+  if(pCur){
+    pSame = periods.find(p => p.thang === pCur.thang - 1 && p.tuan === pCur.tuan) || null;
+    if(!pSame){
+      const lastMonthPeriods = periods.filter(p => p.thang === pCur.thang - 1);
+      pSame = lastMonthPeriods[lastMonthPeriods.length - 1] || periods[0] || null;
+    }
+  }
 
   const isP=(r,p)=>p&&+r[colThang]===p.thang&&+r[colTuan]===p.tuan;
 
@@ -4246,7 +4216,14 @@ function parseBanGiaoSheet(ws, labels){
   const periods=Object.values(periodSet).sort((a,b)=>a.thang!==b.thang?a.thang-b.thang:a.tuan-b.tuan);
   const pCur  = periods[periods.length-1]||null;
   const pPrev = periods[periods.length-2]||null;
-  const pSame = periods[0]||null;
+  let pSame = null;
+  if(pCur){
+    pSame = periods.find(p => p.thang === pCur.thang - 1 && p.tuan === pCur.tuan) || null;
+    if(!pSame){
+      const lastMonthPeriods = periods.filter(p => p.thang === pCur.thang - 1);
+      pSame = lastMonthPeriods[lastMonthPeriods.length - 1] || periods[0] || null;
+    }
+  }
 
   const periodKey=(r)=>{
     if(pCur  &&+r[colThang]===pCur.thang  &&+r[colTuan]===pCur.tuan)  return "1";
