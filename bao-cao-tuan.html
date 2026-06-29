@@ -498,8 +498,7 @@ tr.row-both td:first-child{border-left:2px solid #E06B6B;}
 </div>
 
 <script>
-// ===== GLOBAL DATA =====let LT_PL_W43 = {};
-
+// ===== GLOBAL DATA =====
 let SUMMARY = {"w4_3":{"kh":806,"tb":274173,"tc":1703430,"tg":1977603},"w5_2":{"kh":874,"tb":512935,"tc":2078246,"tg":2591181},"w5_3":{"kh":860,"tb":376741,"tc":1817729,"tg":2194470}};
 let PHANLOAI = {"Enterprise":{"1":629446,"2":764106,"3":848392},"Micro SME":{"1":276383,"2":282084,"3":285599},"Midle Enterprise":{"1":353531,"2":431450,"3":255800},"SME":{"1":316923,"2":462915,"3":294969},"Small SME":{"1":127147,"2":137691,"3":132969}};
 let LOAITIN = {"Brandname CSKH":{"1":941035,"2":1051933,"3":1025428},"Brandname quảng cáo":{"1":147258,"2":247154,"3":82928},"Cố định giá rẻ":{"1":889,"2":831,"3":799},"OTP":{"1":0,"2":0,"3":0},"ViberOTT":{"1":5151,"2":1,"3":7036},"Zalo Bình Thường":{"1":453081,"2":623864,"3":539806},"Zalo Giao Dịch":{"1":0,"2":0,"3":0},"Zalo Tư Vấn":{"1":0,"2":0,"3":0},"Zalo Ưu Tiên":{"1":156016,"2":154463,"3":161732},"Đầu số ngẫu nhiên":{"1":0,"2":0,"3":0}};
@@ -514,10 +513,8 @@ let LT_W53 = {"Brandname CSKH":{"tb":25636,"tc":1025428,"tg":1051064},"Brandname
 let LT_W52 = {"Brandname CSKH":{"tb":19490,"tc":1051933,"tg":1071423},"Brandname quảng cáo":{"tb":108066,"tc":247154,"tg":355220},"Cố định giá rẻ":{"tb":131,"tc":831,"tg":962},"OTP":{"tb":0,"tc":0,"tg":0},"ViberOTT":{"tb":0,"tc":1,"tg":1},"Zalo Bình Thường":{"tb":298828,"tc":623864,"tg":922692},"Zalo Giao Dịch":{"tb":0,"tc":0,"tg":0},"Zalo Tư Vấn":{"tb":0,"tc":0,"tg":0},"Zalo Ưu Tiên":{"tb":86420,"tc":154463,"tg":240883},"Đầu số ngẫu nhiên":{"tb":0,"tc":0,"tg":0}};
 let LT_W43 = {"Brandname CSKH":{"tb":19995,"tc":941035,"tg":961030},"Brandname quảng cáo":{"tb":70331,"tc":147258,"tg":217589},"Cố định giá rẻ":{"tb":87,"tc":889,"tg":976},"OTP":{"tb":0,"tc":0,"tg":0},"ViberOTT":{"tb":4104,"tc":5151,"tg":9255},"Zalo Bình Thường":{"tb":108042,"tc":453081,"tg":561123},"Zalo Giao Dịch":{"tb":0,"tc":0,"tg":0},"Zalo Tư Vấn":{"tb":0,"tc":0,"tg":0},"Zalo Ưu Tiên":{"tb":71614,"tc":156016,"tg":227630},"Đầu số ngẫu nhiên":{"tb":0,"tc":0,"tg":0}};
 let LT_W51 = {"Brandname CSKH": {"tc": 1039073, "tb": 24773, "tg": 1063846}, "Brandname quảng cáo": {"tc": 170756, "tb": 47237, "tg": 217993}, "Cố định giá rẻ": {"tc": 929, "tb": 117, "tg": 1046}, "OTP": {"tc": 0, "tb": 0, "tg": 0}, "ViberOTT": {"tc": 4092, "tb": 3720, "tg": 7812}, "Zalo Bình Thường": {"tc": 1086866, "tb": 272373, "tg": 1359239}, "Zalo Giao Dịch": {"tc": 0, "tb": 0, "tg": 0}, "Zalo Tư Vấn": {"tc": 0, "tb": 1, "tg": 1}, "Zalo Ưu Tiên": {"tc": 190111, "tb": 79909, "tg": 270020}, "Đầu số ngẫu nhiên": {"tc": 0, "tb": 0, "tg": 0}};
-let BD_W43 = {};
 let PL_LT_W53 = {"Enterprise":{"Brandname CSKH":610751,"Zalo Bình Thường":178832,"Zalo Ưu Tiên":58809},"Micro SME":{"Brandname CSKH":70726,"Brandname quảng cáo":38213,"Cố định giá rẻ":58,"OTP":0,"ViberOTT":7036,"Zalo Bình Thường":142675,"Zalo Tư Vấn":0,"Zalo Ưu Tiên":26891,"Đầu số ngẫu nhiên":0},"Midle Enterprise":{"Brandname CSKH":156634,"Brandname quảng cáo":14795,"Zalo Bình Thường":76601,"Zalo Ưu Tiên":7770},"SME":{"Brandname CSKH":129120,"Brandname quảng cáo":11765,"Cố định giá rẻ":741,"Zalo Bình Thường":93509,"Zalo Ưu Tiên":59834},"Small SME":{"Brandname CSKH":58197,"Brandname quảng cáo":18155,"Zalo Bình Thường":48189,"Zalo Ưu Tiên":8428}};
 let PL_LT_W52 = {"Enterprise":{"Brandname CSKH":575922,"Zalo Bình Thường":136012,"Zalo Ưu Tiên":52172},"Micro SME":{"Brandname CSKH":70232,"Brandname quảng cáo":27339,"Cố định giá rẻ":53,"OTP":0,"ViberOTT":1,"Zalo Bình Thường":163253,"Zalo Giao Dịch":0,"Zalo Tư Vấn":0,"Zalo Ưu Tiên":21206,"Đầu số ngẫu nhiên":0},"Midle Enterprise":{"Brandname CSKH":178887,"Brandname quảng cáo":73787,"Zalo Bình Thường":172048,"Zalo Ưu Tiên":6728},"SME":{"Brandname CSKH":177802,"Brandname quảng cáo":116170,"Cố định giá rẻ":778,"Zalo Bình Thường":103406,"Zalo Ưu Tiên":64759},"Small SME":{"Brandname CSKH":49090,"Brandname quảng cáo":29858,"Zalo Bình Thường":49145,"Zalo Ưu Tiên":9598}};
-let PL_LT_W43 = {};
 let LT_PL_W53 = {"Brandname CSKH":{"Enterprise":610751,"Micro SME":70726,"Midle Enterprise":156634,"SME":129120,"Small SME":58197},"Brandname quảng cáo":{"Micro SME":38213,"Midle Enterprise":14795,"SME":11765,"Small SME":18155},"Cố định giá rẻ":{"Micro SME":58,"SME":741},"OTP":{"Micro SME":0},"ViberOTT":{"Micro SME":7036},"Zalo Bình Thường":{"Enterprise":178832,"Micro SME":142675,"Midle Enterprise":76601,"SME":93509,"Small SME":48189},"Zalo Tư Vấn":{"Micro SME":0},"Zalo Ưu Tiên":{"Enterprise":58809,"Micro SME":26891,"Midle Enterprise":7770,"SME":59834,"Small SME":8428},"Đầu số ngẫu nhiên":{"Micro SME":0}};
 let LT_PL_W52 = {"Brandname CSKH":{"Enterprise":575922,"Micro SME":70232,"Midle Enterprise":178887,"SME":177802,"Small SME":49090},"Brandname quảng cáo":{"Micro SME":27339,"Midle Enterprise":73787,"SME":116170,"Small SME":29858},"Cố định giá rẻ":{"Micro SME":53,"SME":778},"OTP":{"Micro SME":0},"ViberOTT":{"Micro SME":1},"Zalo Bình Thường":{"Enterprise":136012,"Micro SME":163253,"Midle Enterprise":172048,"SME":103406,"Small SME":49145},"Zalo Giao Dịch":{"Micro SME":0},"Zalo Tư Vấn":{"Micro SME":0},"Zalo Ưu Tiên":{"Enterprise":52172,"Micro SME":21206,"Midle Enterprise":6728,"SME":64759,"Small SME":9598},"Đầu số ngẫu nhiên":{"Micro SME":0}};
 let ALERTS = [];
@@ -622,7 +619,7 @@ function showPage(id, el){
 function showKHDetail(email){
   const comp=COMP.find(x=>x.email===email);
   if(!comp) return;
-  const bd53=((BD_W53[email]||{}).lt || BD_W53[email] || {}), bd52=((BD_W52[email]||{}).lt || BD_W52[email] || {});
+  const bd53=(BD_W53[email]||{}).lt||{}, bd52=(BD_W52[email]||{}).lt||{};
   const cssName=getCSSForEmail(email)||'—';
   const allLt=[...new Set([...Object.keys(bd53),...Object.keys(bd52)])].filter(lt=>{
     const v3=bd53[lt]?bd53[lt].tc:0, v2=bd52[lt]?bd52[lt].tc:0;
@@ -1552,7 +1549,7 @@ function showInsightKHList(listKey){
     const chg=c.chg_vs_w52;
     const failPct=c.fail_pct!==undefined?c.fail_pct:(c.tg_w53?((c.tb_w53||0)/(c.tg_w53||1)*100).toFixed(1):0);
     const topLt=(()=>{
-      const bd53=((BD_W53[email]||{}).lt || BD_W53[email] || {}), bd52=((BD_W52[email]||{}).lt || BD_W52[email] || {});
+      const bd53=(BD_W53[email]||{}).lt||{}, bd52=(BD_W52[email]||{}).lt||{};
       const all=[...new Set([...Object.keys(bd53),...Object.keys(bd52)])];
       if(!all.length) return '—';
       const best=all.map(lt=>({lt,d:(bd53[lt]?.tc||0)-(bd52[lt]?.tc||0)})).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d))[0];
@@ -2118,10 +2115,9 @@ function parseZBSTuan(workbook){
     });
   }
 
-  var pickedPeriods = zbsPickPeriods_(period_labels);
-  var label_cur  = pickedPeriods.cur  ? pickedPeriods.cur.label  : (period_labels[period_labels.length-1] || 'Hiện tại');
-  var label_prev = pickedPeriods.prev ? pickedPeriods.prev.label : (period_labels[period_labels.length-2] || 'Kỳ trước');
-  var label_same = pickedPeriods.same ? pickedPeriods.same.label : (period_labels[0] || 'Cùng kỳ');
+  var label_cur  = period_labels[period_labels.length-1] || 'Hiện tại';
+  var label_prev = period_labels[period_labels.length-2] || 'Kỳ trước';
+  var label_same = period_labels[0] || 'Cùng kỳ';
 
   console.log('[ZBS Tuần] Parsed', muc_dich.length, 'mục đích | cur='+tong_cur+' | labels:', label_cur, label_prev, label_same);
   if(missing.length) console.warn('[ZBS Tuần] Missing:', missing);
@@ -2139,67 +2135,6 @@ function parseZBSTuan(workbook){
       sheet_name: sheetName,
     }
   };
-}
-
-
-function zbsParsePeriodLabel_(label){
-  var m=String(label||'').match(/T\s*(\d+)\s*-\s*Tháng\s*(\d+)/i);
-  if(!m) return null;
-  return {week:+m[1], month:+m[2], label:String(label).trim(), key:(+m[2])+'_'+(+m[1])};
-}
-function zbsPickPeriods_(periodLabels){
-  var ps=(periodLabels||[]).map(zbsParsePeriodLabel_).filter(Boolean).sort(function(a,b){return a.month!==b.month?a.month-b.month:a.week-b.week;});
-  if(!ps.length) return {cur:null,prev:null,same:null};
-  var cur=ps[ps.length-1];
-  var prev=[].concat(ps).reverse().find(function(p){return p.key!==cur.key;})||null;
-  var same=ps.find(function(p){return p.month===cur.month-1 && p.week===cur.week;})||null;
-  if(!same){
-    var prevMonth=ps.filter(function(p){return p.month===cur.month-1 && p.key!==cur.key && (!prev||p.key!==prev.key);});
-    same=prevMonth.filter(function(p){return p.week<=cur.week;}).sort(function(a,b){return b.week-a.week;})[0]
-      || prevMonth.sort(function(a,b){return b.week-a.week;})[0]
-      || ps.find(function(p){return p.key!==cur.key && (!prev||p.key!==prev.key);}) || null;
-  }
-  return {cur:cur,prev:prev,same:same};
-}
-function parseZBSKHSheet(workbook){
-  var sheetName=null;
-  for(var i=0;i<workbook.SheetNames.length;i++){
-    var sn=workbook.SheetNames[i];
-    if(String(sn).trim().toUpperCase()==='ZBS TUAN' || (sn.toUpperCase().includes('ZBS') && sn.toUpperCase().includes('TUAN'))){sheetName=sn;break;}
-  }
-  if(!sheetName) return [];
-  var ws=workbook.Sheets[sheetName];
-  var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
-  if(!rows||rows.length<2) return [];
-  var headers=rows[0].map(function(h){return h==null?'':String(h).trim();});
-  function col(name){return headers.findIndex(function(h){return h===name;});}
-  var COL={
-    stt:col('STT'), email:col('Khách hàng'), oa:col('Tên OA'), phanloai:col('Loại khách hàng'), mucdich:col('Mục đích gửi tin'),
-    cur:col('Tuần mới nhất'), prev:col('Tuần liền kề trước'), same:col('Tuần cùng kỳ tháng trước'),
-    pct:col('% tăng/giảm vs tuần trước'), pct_s:col('% tăng/giảm vs cùng kỳ tháng trước'), nhan_xet:col('Nhận xét')
-  };
-  var periodLabels=[];
-  for(var ci=0;ci<headers.length;ci++) if(zbsParsePeriodLabel_(headers[ci])) periodLabels.push(headers[ci]);
-  var picked=zbsPickPeriods_(periodLabels);
-  function periodCol(p){return p?headers.indexOf(p.label):-1;}
-  var cCur=periodCol(picked.cur), cPrev=periodCol(picked.prev), cSame=periodCol(picked.same);
-  var out=[];
-  for(var ri=1;ri<rows.length;ri++){
-    var r=rows[ri]; if(!r) continue;
-    var stt=parseFloat(r[COL.stt]); if(isNaN(stt)||stt<=0) continue;
-    var cur=(COL.cur>=0?parseFloat(r[COL.cur]):parseFloat(r[cCur]))||0;
-    var prev=(COL.prev>=0?parseFloat(r[COL.prev]):parseFloat(r[cPrev]))||0;
-    var same=(COL.same>=0?parseFloat(r[COL.same]):parseFloat(r[cSame]))||0;
-    if(cur===0&&prev===0&&same===0) continue;
-    var email=r[COL.email]?String(r[COL.email]).trim():'';
-    var oa=r[COL.oa]?String(r[COL.oa]).trim():'';
-    out.push({
-      email:email, oa_name:oa, phanloai:r[COL.phanloai]?String(r[COL.phanloai]).trim():'', muc_dich:r[COL.mucdich]?String(r[COL.mucdich]).trim():'',
-      cur:cur, prev:prev, same:same, pct:prev>0?(cur-prev)/prev:0,
-      pct_s:same>0?(cur-same)/same:0, nhan_xet:r[COL.nhan_xet]?String(r[COL.nhan_xet]).trim():''
-    });
-  }
-  return out;
 }
 
 function parseZBSThang(workbook){
@@ -2357,7 +2292,7 @@ function buildZBSKH(){
   function extractZalo(bd_obj, target){
     for(var email in bd_obj){
       var bd = bd_obj[email];
-      var lt = bd.lt || bd || {};
+      var lt = bd.lt||{};
       var ut=lt['Zalo Ưu Tiên']||{tc:0}; var bt=lt['Zalo Bình Thường']||{tc:0};
       var tong = (ut.tc||0)+(bt.tc||0);
       if(tong>0){
@@ -2912,6 +2847,7 @@ function renderZBSTab(name){
   // ── B. THEO MỤC ĐÍCH (per-KH from ZBS TUAN sheet) ──
   else if(name==='mucdich'){
     if(!khT.length){ emptyState('Chưa có dữ liệu chi tiết KH theo mục đích ZBS.'); return; }
+    const pl = data['ZBS_PERIOD_LABELS'] || (zbsT?zbsT.period_labels:[]);
     root.innerHTML=`
 <div class="chart-card" style="margin-bottom:16px">
   <h3>Chi tiết theo mục đích — ${lc}</h3>
@@ -3202,7 +3138,7 @@ COMP = [{"chg_vs_w43":-85.2,"chg_vs_w52":7.7,"email":"160hanghieu@gmail.com","fa
   function BEH_KEY(){return BEHAV_KEY;}
 
   function mainProduct(email){
-    const _bd0=(BD_W53[email]||BD_W53[normEmail(email)]||{}); const bd=_bd0.lt || _bd0 || {};
+    const bd=(BD_W53[email]||BD_W53[normEmail(email)]||{}).lt||{};
     let best='', max=-1;
     Object.entries(bd).forEach(([lt,v])=>{const n=(v.tc||0)+(v.tb||0); if(n>max){max=n; best=lt;}});
     return best||'—';
@@ -3537,38 +3473,34 @@ function remapData(rows){
     labelPrev = prev[0] && prev[0].period_label ? prev[0].period_label : 'Tuần trước';
     labelSame = smth[0] && smth[0].period_label ? smth[0].period_label : 'Cùng kỳ tháng trước';
   } else {
-    // Auto-detect from Tháng+Tuần columns (_thang, _tuan)
-    // Đúng logic: mới nhất = hiện tại; liền trước = kỳ ngay trước đó; cùng kỳ = cùng tuần tháng trước.
+    // Auto-detect from Tháng+Tuần columns (_thang, _tuan after normalizeRow)
+    // Find unique (thang, tuan) combos and sort them
     const periodSet = {};
     rows.forEach(r=>{
       const th = +r._thang||0, tu = +r._tuan||0;
-      if(!th||!tu) return;
+      if(!th&&!tu) return;
       const key = `${th}_${tu}`;
       if(!periodSet[key]) periodSet[key]={thang:th,tuan:tu,key,label:`Tuần ${tu} Tháng ${th}`};
     });
     const periods = Object.values(periodSet).sort((a,b)=>
       a.thang!==b.thang ? a.thang-b.thang : a.tuan-b.tuan
     );
-    const findRows = p => p ? rows.filter(r=>+r._thang===p.thang&&+r._tuan===p.tuan) : [];
-    if(periods.length){
-      const pCur = periods[periods.length-1];
-      const pPrev = [...periods].reverse().find(p=>p.key!==pCur.key) || null;
-      let pSame = periods.find(p=>p.thang===pCur.thang-1 && p.tuan===pCur.tuan) || null;
-      if(!pSame){
-        // fallback: nếu tháng trước không có đúng tuần, lấy tuần gần nhất <= tuần hiện tại, nếu không có thì tuần lớn nhất của tháng trước
-        const prevMonthPeriods = periods.filter(p=>p.thang===pCur.thang-1 && p.key!==pCur.key && (!pPrev||p.key!==pPrev.key));
-        pSame = prevMonthPeriods.filter(p=>p.tuan<=pCur.tuan).sort((a,b)=>b.tuan-a.tuan)[0]
-             || prevMonthPeriods.sort((a,b)=>b.tuan-a.tuan)[0]
-             || periods.find(p=>p.key!==pCur.key && (!pPrev||p.key!==pPrev.key))
-             || null;
-      }
-      cur  = findRows(pCur);
-      prev = findRows(pPrev);
-      smth = findRows(pSame);
-      labelCur  = pCur.label;
-      labelPrev = pPrev ? pPrev.label : 'Tuần trước';
-      labelSame = pSame ? pSame.label : 'Cùng kỳ tháng trước';
+    // Latest = current, second latest = previous, earliest = same_month
+    if(periods.length>=3){
+      const [p1,p2,p3] = [periods[periods.length-1], periods[periods.length-2], periods[0]];
+      cur  = rows.filter(r=>+r._thang===p1.thang&&+r._tuan===p1.tuan);
+      prev = rows.filter(r=>+r._thang===p2.thang&&+r._tuan===p2.tuan);
+      smth = rows.filter(r=>+r._thang===p3.thang&&+r._tuan===p3.tuan);
+      labelCur=p1.label; labelPrev=p2.label; labelSame=p3.label;
+    } else if(periods.length===2){
+      const [p1,p2]=[periods[1],periods[0]];
+      cur=rows.filter(r=>+r._thang===p1.thang&&+r._tuan===p1.tuan);
+      prev=rows.filter(r=>+r._thang===p2.thang&&+r._tuan===p2.tuan);
+      labelCur=p1.label; labelPrev=p2.label;
+    } else if(periods.length===1){
+      cur=rows; labelCur=periods[0].label;
     }
+  }
 
   // Helper: sum field
   const sumF = (arr, field) => arr.reduce((s,r)=>s+(+r[field]||0), 0);
@@ -3745,10 +3677,8 @@ function remapData(rows){
     LT_W43:    buildLTW(smth),
     PL_LT_W53: buildPL_LT(cur),
     PL_LT_W52: buildPL_LT(prev),
-    PL_LT_W43: buildPL_LT(smth),
     LT_PL_W53: buildLT_PL(cur),
     LT_PL_W52: buildLT_PL(prev),
-    LT_PL_W43: buildLT_PL(smth),
     COMP:      newCOMP,
     ALERTS:    newALERTS,
     TANG:      newTANG,
@@ -3768,16 +3698,13 @@ function applyRemappedData(d){
   LOAITIN  = d.LOAITIN;
   BD_W53   = d.BD_W53;
   BD_W52   = d.BD_W52;
-  BD_W43   = d.BD_W43;
   LT_W53   = d.LT_W53;
   LT_W52   = d.LT_W52;
   LT_W43   = d.LT_W43;
   PL_LT_W53 = d.PL_LT_W53;
   PL_LT_W52 = d.PL_LT_W52;
-  PL_LT_W43 = d.PL_LT_W43 || {};
   LT_PL_W53 = d.LT_PL_W53;
   LT_PL_W52 = d.LT_PL_W52;
-  LT_PL_W43 = d.LT_PL_W43 || {};
   if(d.WL_MEMBER)    WL_MEMBER    = d.WL_MEMBER;
   if(d.WL_STATUS_W3) WL_STATUS_W3 = d.WL_STATUS_W3;
   if(d.BG_CSS)   BG_CSS   = d.BG_CSS;
@@ -3902,29 +3829,19 @@ getOvData = function(lt){
 const _origInitSlKh = initSlKh;
 pageInits['sl_kh'] = function(){
   if(!window.__uploaded){ _origInitSlKh(); return; }
-  // Sau upload, PHANLOAI đã là dạng flat: {PL:{'1':same,'2':prev,'3':cur}}
-  // Vẫn giữ fallback nếu dữ liệu cũ có dạng {w53,w52,w43}.
-  let _plFlat = {};
-  if(PHANLOAI && (PHANLOAI.w53 || PHANLOAI.w52 || PHANLOAI.w43)){
-    const _ph53=PHANLOAI.w53||{}, _ph52=PHANLOAI.w52||{}, _ph43=PHANLOAI.w43||{};
-    [...new Set([...Object.keys(_ph53),...Object.keys(_ph52),...Object.keys(_ph43)])].forEach(k=>{
-      const nk=normalizePL(k)||k;
-      if(!_plFlat[nk]) _plFlat[nk]={'1':0,'2':0,'3':0};
-      _plFlat[nk]['1']+=(_ph43[k]||{}).tc||0;
-      _plFlat[nk]['2']+=(_ph52[k]||{}).tc||0;
-      _plFlat[nk]['3']+=(_ph53[k]||{}).tc||0;
-    });
-  } else {
-    Object.keys(PHANLOAI||{}).forEach(k=>{
-      const nk=normalizePL(k)||k;
-      if(!_plFlat[nk]) _plFlat[nk]={'1':0,'2':0,'3':0};
-      _plFlat[nk]['1']+=(PHANLOAI[k]&&PHANLOAI[k]['1'])||0;
-      _plFlat[nk]['2']+=(PHANLOAI[k]&&PHANLOAI[k]['2'])||0;
-      _plFlat[nk]['3']+=(PHANLOAI[k]&&PHANLOAI[k]['3'])||0;
-    });
-  }
+  // Convert PHANLOAI {w53:{PL:{tc,...}}} → flat {PL:{'1':same,'2':prev,'3':cur}}
+  const _ph53=PHANLOAI.w53||{}, _ph52=PHANLOAI.w52||{}, _ph43=PHANLOAI.w43||{};
+  const _plFlat={};
+  [...new Set([...Object.keys(_ph53),...Object.keys(_ph52),...Object.keys(_ph43)])].forEach(k=>{
+    const nk=normalizePL(k)||k;
+    if(!_plFlat[nk]) _plFlat[nk]={'1':0,'2':0,'3':0};
+    _plFlat[nk]['1']+=(_ph43[k]||{}).tc||0;
+    _plFlat[nk]['2']+=(_ph52[k]||{}).tc||0;
+    _plFlat[nk]['3']+=(_ph53[k]||{}).tc||0;
+  });
   _renderSlKH(_plFlat, PL_LT_W53||{}, PL_LT_W52||{}, LT_PL_W53||{}, LT_PL_W52||{}, window.__LABELS||{cur:'Hiện tại',prev:'Tuần trước',same:'Cùng kỳ'});
 };
+pageInits['sl_kh']
 
 function _renderSlKH(pl, pl_lt_cur, pl_lt_prev, lt_pl_cur, lt_pl_prev, labels){
   const plKeys=Object.keys(pl);
@@ -4033,7 +3950,7 @@ pageInits['alerts'] = initAlerts;
 const _origShowKHDetail = showKHDetail;
 showKHDetail = function(email){
   if(!window.__uploaded){ _origShowKHDetail(email); return; }
-  const bd53=((BD_W53[email]||{}).lt || BD_W53[email] || {}), bd52=((BD_W52[email]||{}).lt || BD_W52[email] || {});
+  const bd53=(BD_W53[email]||{}).lt||{}, bd52=(BD_W52[email]||{}).lt||{};
   const comp=COMP.find(x=>x.email===email);
   if(!comp){openModal('KH: '+email,'<div style="color:var(--muted);font-size:13px">Không có dữ liệu.</div>');return;}
   const labels=window.__LABELS||{};
@@ -4108,15 +4025,6 @@ window.handleDataUpload = function(input){
         }
 
         const d = remapData(rows);
-
-        // Parse ZBS sheets nếu file có sheet ZBS
-        try {
-          const zbsTuan = parseZBSTuan(wb2);
-          const zbsThang = parseZBSThang(wb2);
-          window.__ZBS = {tuan:zbsTuan||null, thang:zbsThang||null};
-          ZBS_DATA = window.__ZBS;
-          window.__ZBS_KH_TUAN = parseZBSKHSheet(wb2);
-        } catch(e) { console.warn('[ZBS] Parse upload error:', e); }
 
         // Parse TICKET sheet → WL_MEMBER + WL_STATUS
         const ticketSheet = wb2.SheetNames.find(s=>s.toUpperCase().includes('TICKET'));
@@ -4310,10 +4218,10 @@ function exportHTMLWithData(){
     (function(){
       const _d = ${JSON.stringify({
         SUMMARY, PHANLOAI, LOAITIN,
-        BD_W53, BD_W52, BD_W43,
+        BD_W53, BD_W52,
         LT_W53, LT_W52, LT_W43,
-        PL_LT_W53, PL_LT_W52, PL_LT_W43,
-        LT_PL_W53, LT_PL_W52, LT_PL_W43,
+        PL_LT_W53, PL_LT_W52,
+        LT_PL_W53, LT_PL_W52,
         WL_MEMBER, WL_STATUS_W3,
         BG_CSS, BG_CUMOI, BG_TTKD,
         COMP, ALERTS,
@@ -4326,16 +4234,13 @@ function exportHTMLWithData(){
       LOAITIN  = _d.LOAITIN;
       BD_W53   = _d.BD_W53;
       BD_W52   = _d.BD_W52;
-      BD_W43   = _d.BD_W43;
       LT_W53   = _d.LT_W53;
       LT_W52   = _d.LT_W52;
       LT_W43   = _d.LT_W43;
       PL_LT_W53 = _d.PL_LT_W53;
       PL_LT_W52 = _d.PL_LT_W52;
-      PL_LT_W43 = _d.PL_LT_W43 || {};
       LT_PL_W53 = _d.LT_PL_W53;
       LT_PL_W52 = _d.LT_PL_W52;
-      LT_PL_W43 = _d.LT_PL_W43 || {};
       WL_MEMBER = _d.WL_MEMBER;
       WL_STATUS_W3 = _d.WL_STATUS_W3;
       BG_CSS   = _d.BG_CSS;
